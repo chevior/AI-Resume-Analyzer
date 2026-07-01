@@ -1,0 +1,33 @@
+# Dependencies and virtual environments
+node_modules/
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+
+# Frontend build output
+frontend/build/
+build/
+
+# Local environment and editor state
+.env
+.env.*
+!.env.example
+.vscode/
+
+# Runtime/user-generated files
+backend/uploads/
+backend/uploads
+uploads/
+
+# Logs and local diagnostics
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+frontend-*.png
+theme-*.png
+
+# OS files
+Thumbs.db
+.DS_Store

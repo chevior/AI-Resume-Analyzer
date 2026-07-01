@@ -1,0 +1,14 @@
+{
+  "name": "ai-resume-analyzer-backend",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "python app.py",
+    "start": "python app.py"
+  },
+  "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
+    "@mui/icons-material": "^9.1.1",
+    "@mui/material": "^9.1.1"
+  }
+}
