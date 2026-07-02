@@ -53,6 +53,15 @@ def login():
         return jsonify({"error": "Username and password required."}), 400
 
     user = USERS.get(username)
+    if not user:
+        username_from_email = next(
+            (stored_username for stored_username, stored_user in USERS.items() if stored_user["email"].lower() == username.lower()),
+            None
+        )
+        if username_from_email:
+            username = username_from_email
+            user = USERS[username]
+
     if not user or not check_password_hash(user["password"], password):
         return jsonify({"error": "Invalid username or password."}), 401
 
