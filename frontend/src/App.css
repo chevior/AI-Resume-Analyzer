@@ -105,8 +105,78 @@ button:disabled {
   object-fit: cover;
 }
 
+.accountPanel {
+  display: grid;
+  gap: 14px;
+  padding: 14px;
+  border: 1px solid color-mix(in srgb, var(--line) 82%, transparent);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--panel) 96%, transparent);
+  box-shadow: 0 18px 44px rgba(13, 32, 45, 0.08);
+}
+
+.accountModePill {
+  display: inline-flex;
+  align-items: center;
+  justify-self: start;
+  gap: 9px;
+  min-height: 38px;
+  padding: 8px 16px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, var(--primary), #0697a8);
+  color: #fff;
+  box-shadow: 0 10px 22px rgba(12, 159, 145, 0.18);
+}
+
+.accountModePill .modeIcon {
+  font-size: 0.74rem;
+  color: #fff;
+}
+
+.accountModePill strong {
+  font-size: 0.94rem;
+  font-weight: 900;
+}
+
+.accountActions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.accountActions.guestActions {
+  grid-template-columns: 0.95fr 1fr 1.1fr;
+}
+
+.accountActions button {
+  min-width: 0;
+  min-height: 42px;
+  padding: 8px 10px;
+  font-size: 0.86rem;
+  box-shadow: 0 8px 18px rgba(13, 32, 45, 0.08);
+}
+
+.accountActions .primaryButton {
+  background: linear-gradient(135deg, var(--primary), #0697a8);
+}
+
+.themeAction {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  background: #172230;
+  border-color: #172230;
+  color: #fff;
+}
+
+.themeAction span {
+  font-size: 0.82rem;
+}
+
 .searchBox {
   display: grid;
+  position: relative;
   gap: 6px;
   color: var(--muted);
   font-size: 0.78rem;
@@ -123,13 +193,30 @@ button:disabled {
   border-radius: 8px;
   background: var(--panel-2);
   color: var(--text);
-  padding: 11px 13px;
+  padding: 11px 42px 11px 13px;
   outline: 0;
 }
 
 .keywordCard textarea {
   min-height: 96px;
   resize: vertical;
+}
+
+.searchToggle {
+  position: absolute;
+  right: 6px;
+  bottom: 6px;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel);
+  color: var(--primary-dark);
+  font-size: 0.82rem;
+  font-weight: 900;
 }
 
 .sideNav {
@@ -197,35 +284,32 @@ button:disabled {
   text-transform: uppercase;
 }
 
-.topTools {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
 .avatarBlock {
   display: flex;
   align-items: center;
-  gap: 9px;
-  padding: 7px 10px;
-  border: 1px solid var(--line);
+  gap: 16px;
+  min-height: 120px;
+  padding: 18px;
+  border: 1px solid color-mix(in srgb, var(--primary) 30%, var(--line));
+  border-left: 4px solid var(--primary);
   border-radius: 8px;
-  background: var(--panel);
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--primary-soft) 55%, transparent), transparent 70%),
+    color-mix(in srgb, var(--panel) 94%, transparent);
 }
 
 .avatarInitials {
-  width: 32px;
-  height: 32px;
+  width: 74px;
+  height: 74px;
   display: grid;
   place-items: center;
-  border: 1px solid color-mix(in srgb, var(--primary) 35%, transparent);
+  border: 7px solid #fff;
   border-radius: 50%;
-  background: var(--primary-soft);
-  color: var(--primary-dark);
-  font-size: 0.78rem;
+  background: linear-gradient(135deg, var(--primary), #168f84);
+  color: #fff;
+  font-size: 1.65rem;
   font-weight: 900;
+  box-shadow: 0 14px 28px rgba(12, 159, 145, 0.2);
 }
 
 .avatarBlock div {
@@ -234,19 +318,19 @@ button:disabled {
 }
 
 .avatarBlock strong {
-  max-width: 130px;
+  max-width: 150px;
   overflow: hidden;
   color: var(--text);
-  font-size: 0.86rem;
+  font-size: 1.15rem;
   line-height: 1.1;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 .avatarBlock small {
-  color: var(--muted);
-  font-size: 0.74rem;
-  font-weight: 750;
+  color: color-mix(in srgb, var(--muted) 88%, var(--text));
+  font-size: 0.92rem;
+  font-weight: 650;
 }
 
 .dashboardHero,
@@ -255,7 +339,7 @@ button:disabled {
   border: 1px solid var(--line);
   border-radius: 8px;
   background: color-mix(in srgb, var(--panel) 94%, transparent);
-  box-shadow: var(--soft-shadow);
+  box-shadow: 0 10px 24px rgba(13, 32, 45, 0.06);
 }
 
 .dashboardHero {
@@ -289,7 +373,7 @@ button:disabled {
   border: 1px solid var(--line);
   border-radius: 8px;
   background: color-mix(in srgb, var(--panel) 94%, transparent);
-  box-shadow: var(--soft-shadow);
+  box-shadow: 0 8px 18px rgba(13, 32, 45, 0.05);
 }
 
 .metricStrip span {
@@ -523,53 +607,131 @@ button:disabled {
 }
 
 .featurePanel {
-  padding: 24px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
 }
 
 .featureHeader {
   display: grid;
-  justify-items: start;
-  gap: 8px;
-  max-width: 720px;
-  margin-bottom: 20px;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 8px 14px;
+  padding: 0 0 12px;
+  margin-bottom: 10px;
+  border-bottom: 1px solid var(--line);
+}
+
+.featureHeader .eyebrow,
+.featureHeader h2,
+.featureHeader p {
+  grid-column: 1;
+}
+
+.featureHeader .primaryButton {
+  grid-column: 2;
+  grid-row: 1 / span 3;
+  align-self: center;
+  min-height: 34px;
+  padding: 7px 12px;
+  font-size: 0.84rem;
+}
+
+.featureHeader p {
+  max-width: 680px;
+  margin-top: 2px;
+  font-size: 0.9rem;
+  line-height: 1.35;
 }
 
 .featureList,
 .featureGrid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 16px;
+  grid-template-columns: 1fr;
+  gap: 0;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--panel) 92%, transparent);
 }
 
 .featureItem {
   display: flex;
-  gap: 14px;
+  align-items: flex-start;
+  gap: 9px;
+  min-height: auto;
+  padding: 8px 10px;
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  background: transparent;
+  box-shadow: none;
+}
+
+.featureItem:last-child {
+  border-bottom: 0;
 }
 
 .featureItem span {
+  flex: 0 0 auto;
+  width: 22px;
+  height: 22px;
+  display: grid;
+  place-items: center;
+  border-radius: 6px;
+  background: transparent;
   color: var(--primary-dark);
+  font-size: 0.7rem;
   font-weight: 900;
 }
 
 .featureItem p,
 .jobCard p {
   margin: 0;
-  color: var(--muted);
+  color: color-mix(in srgb, var(--text) 76%, var(--muted));
+  font-size: 0.84rem;
+  line-height: 1.28;
+}
+
+.jobCard {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 10px 12px;
+  padding: 12px;
+  box-shadow: none;
+}
+
+.jobCard .eyebrow,
+.jobCard h3,
+.jobCard p,
+.jobCard .chipCloud {
+  grid-column: 2;
+}
+
+.jobCard h3 {
+  margin-bottom: 4px;
 }
 
 .jobCard .scoreRing {
-  width: 132px;
-  height: 132px;
-  margin: 12px 0;
+  grid-column: 1;
+  grid-row: 1 / span 4;
+  width: 78px;
+  height: 78px;
+  margin: 0;
 }
 
 .jobCard .scoreInner {
-  width: 78px;
-  height: 78px;
+  width: 50px;
+  height: 50px;
 }
 
 .jobCard .scoreInner strong {
-  font-size: 1.3rem;
+  font-size: 0.92rem;
+}
+
+.jobCard .scoreInner span {
+  font-size: 0.58rem;
 }
 
 .modalBackdrop {
@@ -661,8 +823,37 @@ button:disabled {
     flex-direction: column;
   }
 
-  .topTools {
-    justify-content: flex-start;
+  .accountActions {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .accountActions.guestActions {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .accountPanel {
+    gap: 12px;
+    padding: 12px;
+  }
+
+  .avatarBlock {
+    min-height: 92px;
+    padding: 12px;
+  }
+
+  .avatarInitials {
+    width: 56px;
+    height: 56px;
+    border-width: 5px;
+    font-size: 1.2rem;
+  }
+
+  .avatarBlock strong {
+    font-size: 1rem;
+  }
+
+  .avatarBlock small {
+    font-size: 0.82rem;
   }
 
   .sideNav,
@@ -673,6 +864,16 @@ button:disabled {
   .quickActions,
   .modalButtons {
     grid-template-columns: 1fr;
+  }
+
+  .featureHeader {
+    grid-template-columns: 1fr;
+  }
+
+  .featureHeader .primaryButton {
+    grid-column: 1;
+    grid-row: auto;
+    width: 100%;
   }
 
   .scoreRing {

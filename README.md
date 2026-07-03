@@ -145,18 +145,6 @@ username: admin
 password: admin123
 ```
 
-## GitHub OAuth
-
-GitHub login requires environment variables:
-
-```text
-GITHUB_CLIENT_ID=<your-client-id>
-GITHUB_CLIENT_SECRET=<your-client-secret>
-GITHUB_REDIRECT_URI=http://localhost:3000/auth/github/callback
-```
-
-If these are not set, the app still works with username/password login.
-
 ## How Resume Analysis Works
 
 When a PDF is uploaded, the backend:
@@ -176,6 +164,3 @@ When a PDF is uploaded, the backend:
 - Uploaded resume files are processed in request memory and are not persisted by default.
 - For production, replace the in-memory user store with a database and add persistent report/history storage.
 
-## License
-
-Add your preferred license before publishing this project.

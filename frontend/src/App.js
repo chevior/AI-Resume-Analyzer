@@ -33,6 +33,19 @@ function ScoreRing({ score = 0 }) {
   );
 }
 
+function uniqueItems(items, limit = 8) {
+  const seen = new Set();
+  return (items || [])
+    .map((item) => String(item || "").trim())
+    .filter((item) => {
+      const key = item.toLowerCase();
+      if (!item || seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    })
+    .slice(0, limit);
+}
+
 function App() {
   const [theme, setTheme] = useState("light");
   const [activeSection, setActiveSection] = useState("dashboard");
@@ -50,6 +63,7 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [search, setSearch] = useState("");
+  const [menuOpen, setMenuOpen] = useState(true);
 
   useEffect(() => {
     const saved = localStorage.getItem("resumeAppState");
@@ -459,12 +473,12 @@ function App() {
         <FeaturePanel
           title="Resume Analyzer"
           subtitle={hasAnalysis ? "Backend-calculated strengths, weaknesses, formatting, and improvement tips." : "Upload a resume to run the analyzer against extracted PDF text."}
-          items={hasAnalysis ? [
+          items={hasAnalysis ? uniqueItems([
             ...(metadata.resume_analyzer?.strengths || result?.strengths || []),
             ...(metadata.resume_analyzer?.weaknesses || result?.weaknesses || []),
-            ...(metadata.resume_analyzer?.formatting_checks?.map((item) => `${item.status.toUpperCase()}: ${item.label}. ${item.detail || ""}`) || []),
+            ...(metadata.resume_analyzer?.formatting_checks?.map((item) => `${item.status.toUpperCase()}: ${item.label}`) || []),
             ...(result?.improvement_tips || []),
-          ] : requireAnalysisItems}
+          ], 7) : requireAnalysisItems}
           action={hasAnalysis ? "Analyze new resume" : "Upload resume"}
           onAction={openUploadFlow}
           status={hasAnalysis ? `${result.word_count || 0} words analyzed` : "No resume analyzed"}
@@ -500,10 +514,10 @@ function App() {
         <FeaturePanel
           title="Progress"
           subtitle={hasAnalysis ? "Track backend-calculated readiness, skill coverage, gaps, and next steps." : "Progress tracking starts after your first resume scan."}
-          items={hasAnalysis ? [
+          items={hasAnalysis ? uniqueItems([
             ...progressItems.map((item) => `${item.label}: ${item.value}${item.unit}`),
             ...(metadata.progress?.next_steps || []),
-          ] : requireAnalysisItems}
+          ], 8) : requireAnalysisItems}
           action={hasAnalysis ? "Download report" : "Upload resume"}
           onAction={hasAnalysis ? downloadReport : openUploadFlow}
           status={hasAnalysis ? "Live progress" : "No scan yet"}
@@ -515,10 +529,10 @@ function App() {
         <FeaturePanel
           title="Questions"
           subtitle={hasAnalysis ? "Interview and recruiter-screening questions generated from your resume." : "Upload a resume to generate personalized questions."}
-          items={hasAnalysis ? [
+          items={hasAnalysis ? uniqueItems([
             ...questions,
             ...(metadata.questions?.screening || []),
-          ] : requireAnalysisItems}
+          ], 8) : requireAnalysisItems}
           action={hasAnalysis ? "Download report" : "Upload resume"}
           onAction={hasAnalysis ? downloadReport : openUploadFlow}
           status={hasAnalysis ? `${questions.length} interview prompts` : "Waiting for resume"}
@@ -530,7 +544,7 @@ function App() {
         <FeaturePanel
           title="Insight"
           subtitle={hasAnalysis ? "Backend-calculated recommendations, missing keywords, and best-role fit." : "Upload a resume to generate actionable insight."}
-          items={hasAnalysis ? metadata.insights?.recommendations?.length ? metadata.insights.recommendations : result?.recommendations || [] : requireAnalysisItems}
+          items={hasAnalysis ? uniqueItems(metadata.insights?.recommendations?.length ? metadata.insights.recommendations : result?.recommendations || [], 7) : requireAnalysisItems}
           action={hasAnalysis ? "Compare job" : "Upload resume"}
           onAction={hasAnalysis ? () => setActiveSection("dashboard") : openUploadFlow}
           status={hasAnalysis ? metadata.insights?.best_role?.role || "Insight ready" : "Waiting for resume"}
@@ -547,17 +561,58 @@ function App() {
           <img className="brandMark" src={PROFILE_IMAGE} alt="ResumeNova profile" />
           <strong>ResumeNova</strong>
         </div>
+        <section className="accountPanel">
+          <div className="accountModePill">
+            <span className="modeIcon">●</span>
+            <strong>{user ? "Signed In" : "Guest Mode"}</strong>
+          </div>
+          {user ? (
+            <div className="avatarBlock" title={user.profile_verified ? `Verified by ${user.verified_by}` : "Profile not verified"}>
+              <span className="avatarInitials">{user.initials || user.username?.slice(0, 2).toUpperCase()}</span>
+              <div>
+                <strong>{user.display_name || user.username}</strong>
+                <small>{user.profile_verified ? "Backend verified" : "Unverified"}</small>
+              </div>
+            </div>
+          ) : (
+            <div className="avatarBlock">
+              <span className="avatarInitials">GN</span>
+              <div>
+                <strong>Guest</strong>
+                <small>Login to analyze</small>
+              </div>
+            </div>
+          )}
+          <div className={user ? "accountActions" : "accountActions guestActions"}>
+            <button className="iconButton themeAction" onClick={() => setTheme(theme === "light" ? "dark" : "light")} aria-label="Toggle theme">
+              <span>{theme === "light" ? "Moon" : "Sun"}</span>{theme === "light" ? "Dark" : "Light"}
+            </button>
+            {user ? (
+              <button className="secondaryButton" onClick={handleLogout}>Logout</button>
+            ) : (
+              <>
+                <button className="secondaryButton" onClick={() => setAuthMode("login")}>Login</button>
+                <button className="primaryButton" onClick={() => setAuthMode("register")}>Sign Up</button>
+              </>
+            )}
+          </div>
+        </section>
         <label className="searchBox">
           <span>Search</span>
+          <button className="searchToggle" type="button" onClick={() => setMenuOpen((open) => !open)} aria-expanded={menuOpen} aria-controls="sidebar-options" aria-label={menuOpen ? "Close options" : "Open options"}>
+            {menuOpen ? "▲" : "▼"}
+          </button>
           <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search..." />
         </label>
-        <nav className="sideNav">
-          {NAV_ITEMS.filter((item) => item.label.toLowerCase().includes(search.toLowerCase())).map((item) => (
-            <button key={item.id} className={activeSection === item.id ? "active" : ""} onClick={() => setActiveSection(item.id)}>
-              <span>{item.mark}</span>{item.label}
-            </button>
-          ))}
-        </nav>
+        {menuOpen && (
+          <nav className="sideNav" id="sidebar-options">
+            {NAV_ITEMS.filter((item) => item.label.toLowerCase().includes(search.toLowerCase())).map((item) => (
+              <button key={item.id} className={activeSection === item.id ? "active" : ""} onClick={() => setActiveSection(item.id)}>
+                <span>{item.mark}</span>{item.label}
+              </button>
+            ))}
+          </nav>
+        )}
       </aside>
 
       <main className="workspace">
@@ -565,26 +620,6 @@ function App() {
           <div>
             <span className="eyebrow">Dashboard</span>
             <h1>{NAV_ITEMS.find((item) => item.id === activeSection)?.label || "Dashboard"}</h1>
-          </div>
-          <div className="topTools">
-            <button className="iconButton" onClick={() => setTheme(theme === "light" ? "dark" : "light")} aria-label="Toggle theme">{theme === "light" ? "Moon" : "Sun"}</button>
-            {user ? (
-              <>
-                <div className="avatarBlock" title={user.profile_verified ? `Verified by ${user.verified_by}` : "Profile not verified"}>
-                  <span className="avatarInitials">{user.initials || user.username?.slice(0, 2).toUpperCase()}</span>
-                  <div>
-                    <strong>{user.display_name || user.username}</strong>
-                    <small>{user.profile_verified ? "Backend verified" : "Unverified"}</small>
-                  </div>
-                </div>
-                <button className="secondaryButton" onClick={handleLogout}>Logout</button>
-              </>
-            ) : (
-              <>
-                <button className="secondaryButton" onClick={() => setAuthMode("login")}>Login</button>
-                <button className="primaryButton" onClick={() => setAuthMode("register")}>Sign Up</button>
-              </>
-            )}
           </div>
         </header>
 
@@ -618,7 +653,7 @@ function App() {
 }
 
 function FeaturePanel({ title, subtitle, items, action, onAction, status }) {
-  const safeItems = items?.length ? items : ["Upload a resume to generate this feature."];
+  const safeItems = uniqueItems(items?.length ? items : ["Upload a resume to generate this feature."], 8);
   return (
     <section className="featurePanel">
       <div className="featureHeader">
@@ -629,7 +664,7 @@ function FeaturePanel({ title, subtitle, items, action, onAction, status }) {
       </div>
       <div className="featureList">
         {safeItems.map((item, index) => (
-          <div className="card featureItem" key={`${item}-${index}`}>
+          <div className="featureItem" key={`${item}-${index}`}>
             <span>{String(index + 1).padStart(2, "0")}</span>
             <p>{item}</p>
           </div>
