@@ -13,6 +13,23 @@ USERS = {
     "chethang387": {"password": generate_password_hash("12345678"), "role": "admin", "subscription": "go", "email": "chethang387@gmail.com"},
 }
 
+
+def public_profile(username, user):
+    display_name = username.replace("_", " ").replace(".", " ").title()
+    initials = "".join(part[0] for part in display_name.split()[:2]).upper() or username[:2].upper()
+    return {
+        "success": True,
+        "username": username,
+        "display_name": display_name,
+        "initials": initials[:2],
+        "email": user["email"],
+        "role": user["role"],
+        "subscription": user["subscription"],
+        "github_username": user.get("github_username"),
+        "profile_verified": True,
+        "verified_by": "backend-auth-store",
+    }
+
 @auth_bp.route("/register", methods=["POST"])
 def register():
     payload = request.get_json(silent=True) or {}
@@ -66,13 +83,19 @@ def login():
         return jsonify({"error": "Invalid username or password."}), 401
 
     return jsonify({
-        "success": True,
-        "username": username,
-        "email": user["email"],
-        "role": user["role"],
-        "subscription": user["subscription"],
+        **public_profile(username, user),
         "loginTime": datetime.now().isoformat()
     })
+
+
+@auth_bp.route("/profile/<username>", methods=["GET"])
+def profile(username):
+    username = username.strip()
+    user = USERS.get(username)
+    if not user:
+        return jsonify({"error": "User profile not found.", "profile_verified": False}), 404
+
+    return jsonify(public_profile(username, user))
 
 @auth_bp.route("/subscribe", methods=["POST"])
 def subscribe():

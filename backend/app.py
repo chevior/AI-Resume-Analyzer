@@ -45,8 +45,10 @@ def get_home_payload():
         },
         "endpoints": {
             "upload": "/api/resume/upload",
+            "resume_metadata": "/api/resume/metadata",
             "job_match": "/api/resume/job-match",
             "login": "/api/auth/login",
+            "profile": "/api/auth/profile/<username>",
             "subscribe": "/api/auth/subscribe",
             "github_login": "/api/github/login",
             "github_callback": "/api/github/callback",

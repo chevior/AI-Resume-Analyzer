@@ -3,9 +3,26 @@ from services.pdf_service import extract_pdf_text
 from services.skill_service import extract_skills
 from services.ats_service import calculate_ats
 from services.interview_service import generate_questions
+from services.resume_metadata_service import build_resume_metadata
 from models.resume import Resume
 
 resume_bp = Blueprint("resume", __name__)
+
+
+@resume_bp.route("/metadata", methods=["GET"])
+def resume_feature_metadata():
+    return jsonify({
+        "success": True,
+        "features": {
+            "mock_interview": "Questions, difficulty, and focus areas generated from resume skills.",
+            "resume_analyzer": "Strengths, weaknesses, formatting checks, and resume preview.",
+            "jobs": "Suggested job roles ranked by required-skill match.",
+            "progress": "ATS readiness, skill coverage, gaps, and next steps.",
+            "questions": "Interview and recruiter-screening questions.",
+            "insights": "Recommendations, high-value missing keywords, and best-role fit.",
+        },
+        "calculation_source": "All feature metadata is calculated on the backend from uploaded resume text, extracted skills, and ATS score.",
+    })
 
 @resume_bp.route("/upload", methods=["POST"])
 def upload_resume():
@@ -79,6 +96,15 @@ def upload_resume():
         "Add project tech stack clearly."
     ]
 
+    feature_metadata = build_resume_metadata(
+        text=text,
+        skills=skills,
+        ats_score=ats_score,
+        word_count=word_count,
+        recommendations=recommendations or improvement_tips,
+        questions=questions,
+    )
+
     # UI / product metadata for front-end
     ui_meta = {
         "homepage_title": "AI Resume Analyzer Smart ATS scoring, skill extraction, and interview preparation in one dashboard.",
@@ -133,6 +159,7 @@ def upload_resume():
             "recommendations": recommendations,
             "resume_preview": text[:900]
         },
+        "metadata": feature_metadata,
         "ui": ui_meta
     }
 
