@@ -287,9 +287,9 @@ button:disabled {
 .avatarBlock {
   display: flex;
   align-items: center;
-  gap: 16px;
-  min-height: 120px;
-  padding: 18px;
+  gap: 11px;
+  min-height: 76px;
+  padding: 10px;
   border: 1px solid color-mix(in srgb, var(--primary) 30%, var(--line));
   border-left: 4px solid var(--primary);
   border-radius: 8px;
@@ -299,17 +299,17 @@ button:disabled {
 }
 
 .avatarInitials {
-  width: 74px;
-  height: 74px;
+  width: 48px;
+  height: 48px;
   display: grid;
   place-items: center;
-  border: 7px solid #fff;
+  border: 4px solid #fff;
   border-radius: 50%;
   background: linear-gradient(135deg, var(--primary), #168f84);
   color: #fff;
-  font-size: 1.65rem;
+  font-size: 1.05rem;
   font-weight: 900;
-  box-shadow: 0 14px 28px rgba(12, 159, 145, 0.2);
+  box-shadow: 0 10px 20px rgba(12, 159, 145, 0.18);
 }
 
 .avatarBlock div {
@@ -321,7 +321,7 @@ button:disabled {
   max-width: 150px;
   overflow: hidden;
   color: var(--text);
-  font-size: 1.15rem;
+  font-size: 0.98rem;
   line-height: 1.1;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -329,7 +329,7 @@ button:disabled {
 
 .avatarBlock small {
   color: color-mix(in srgb, var(--muted) 88%, var(--text));
-  font-size: 0.92rem;
+  font-size: 0.8rem;
   font-weight: 650;
 }
 
@@ -834,26 +834,6 @@ button:disabled {
   .accountPanel {
     gap: 12px;
     padding: 12px;
-  }
-
-  .avatarBlock {
-    min-height: 92px;
-    padding: 12px;
-  }
-
-  .avatarInitials {
-    width: 56px;
-    height: 56px;
-    border-width: 5px;
-    font-size: 1.2rem;
-  }
-
-  .avatarBlock strong {
-    font-size: 1rem;
-  }
-
-  .avatarBlock small {
-    font-size: 0.82rem;
   }
 
   .sideNav,
