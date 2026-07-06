@@ -11,6 +11,7 @@ const NAV_ITEMS = [
   { id: "analyzer", label: "Resume Analyzer", mark: "A" },
   { id: "jobs", label: "Jobs", mark: "J" },
   { id: "progress", label: "Progress", mark: "P" },
+  { id: "action-plan", label: "Action Plan", mark: "N" },
   { id: "questions", label: "Questions", mark: "Q" },
   { id: "insights", label: "Insight", mark: "I" },
 ];
@@ -160,6 +161,22 @@ function App() {
     "What would you improve in your current resume for this role?",
   ];
   const jobs = metadata.jobs?.length ? metadata.jobs : FALLBACK_JOBS;
+  const readiness = metadata.dashboard?.readiness || {
+    score: currentScore,
+    category: result ? "Resume scanned" : "Sample readiness",
+    breakdown: [
+      { key: "ats", label: "ATS readiness", score: currentScore, status: currentScore >= 75 ? "strong" : "improve" },
+      { key: "skills", label: "Skill coverage", score: Math.min(100, extractedSkills.length * 12), status: extractedSkills.length >= 6 ? "strong" : "improve" },
+      { key: "proof", label: "Proof links", score: result ? 45 : 70, status: "improve" },
+      { key: "impact", label: "Measured impact", score: result ? 50 : 72, status: "improve" },
+      { key: "targeting", label: "Role targeting", score: jobs[0]?.match || 70, status: "strong" },
+    ],
+  };
+  const actionPlan = metadata.action_plan?.length ? metadata.action_plan : [
+    { title: "Upload a resume", priority: "High", effort: "2 min", detail: "Analyze a PDF resume to generate personalized next steps." },
+    { title: "Compare one job", priority: "Medium", effort: "5 min", detail: "Paste a job description to identify exact keyword gaps." },
+    { title: "Practice questions", priority: "Medium", effort: "15 min", detail: "Use generated interview prompts after analysis." },
+  ];
   const progressItems = metadata.progress?.items?.length ? metadata.progress.items : [
     { label: "ATS readiness", value: currentScore, unit: "%" },
     { label: "Skills detected", value: extractedSkills.length, unit: "" },
@@ -354,9 +371,13 @@ function App() {
     const report = [
       "AI Resume Analyzer Report",
       `ATS Score: ${currentScore}%`,
+      `Career Readiness: ${readiness.score}% - ${readiness.category}`,
       `Skills: ${extractedSkills.join(", ")}`,
       `Missing Keywords: ${missingSkills.join(", ")}`,
       `Best Role Fit: ${metadata.insights?.best_role?.role || jobs[0]?.role || "Not calculated"}`,
+      "",
+      "Action Plan:",
+      ...actionPlan.map((action) => `${action.priority}: ${action.title} (${action.effort}) - ${action.detail}`),
       "",
       "Recommendations:",
       ...(metadata.insights?.recommendations?.length ? metadata.insights.recommendations : result?.recommendations?.length ? result.recommendations : ["Add measurable results, targeted keywords, and links to proof of work."]),
@@ -442,6 +463,42 @@ function App() {
           ))}
         </section>
 
+        <section className="card readinessCard">
+          <div className="cardTitle">
+            <h3>Career Readiness</h3>
+            <span>{readiness.category}</span>
+          </div>
+          <div className="readinessScore">
+            <strong>{readiness.score}%</strong>
+            <p>{result ? "Weighted from ATS score, skills, proof, impact, and target-role fit." : "Sample view until you upload a resume."}</p>
+          </div>
+          <div className="readinessList">
+            {readiness.breakdown.map((item) => (
+              <div className="readinessRow" key={item.key}>
+                <span>{item.label}</span>
+                <div className="miniBar"><i style={{ width: `${item.score}%` }} /></div>
+                <strong>{item.score}%</strong>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section className="card actionCard">
+          <div className="cardTitle">
+            <h3>Next Best Actions</h3>
+            <span>{actionPlan.length} tasks</span>
+          </div>
+          <div className="actionStack">
+            {actionPlan.slice(0, 3).map((action) => (
+              <button className="actionItem" key={action.title} onClick={() => setActiveSection("action-plan")}>
+                <span>{action.priority}</span>
+                <strong>{action.title}</strong>
+                <small>{action.effort}</small>
+              </button>
+            ))}
+          </div>
+        </section>
+
         <section className="card chipCard">
           <h3>Extracted Skills</h3>
           <div className="chipCloud">{extractedSkills.map((skill) => <span key={skill}>{skill}</span>)}</div>
@@ -524,6 +581,33 @@ function App() {
         />
       );
     }
+    if (activeSection === "action-plan") {
+      return (
+        <section className="featurePanel">
+          <div className="featureHeader">
+            <span className="eyebrow">{hasAnalysis ? readiness.category : "Waiting for resume"}</span>
+            <h2>Action Plan</h2>
+            <p>{hasAnalysis ? `Prioritized fixes based on a ${readiness.score}% career readiness score.` : "Upload a resume to generate a prioritized action plan."}</p>
+            <button className="primaryButton" onClick={hasAnalysis ? downloadReport : openUploadFlow}>{hasAnalysis ? "Download report" : "Upload resume"}</button>
+          </div>
+          <div className="planBoard">
+            {actionPlan.map((action, index) => (
+              <article className="planItem" key={`${action.title}-${index}`}>
+                <span>{String(index + 1).padStart(2, "0")}</span>
+                <div>
+                  <div className="planMeta">
+                    <strong>{action.priority}</strong>
+                    <small>{action.effort}</small>
+                  </div>
+                  <h3>{action.title}</h3>
+                  <p>{action.detail}</p>
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+      );
+    }
     if (activeSection === "questions") {
       return (
         <FeaturePanel
@@ -563,7 +647,7 @@ function App() {
         </div>
         <section className="accountPanel">
           <div className="accountModePill">
-            <span className="modeIcon">●</span>
+            <span className="modeIcon">ON</span>
             <strong>{user ? "Signed In" : "Guest Mode"}</strong>
           </div>
           {user ? (
@@ -600,7 +684,7 @@ function App() {
         <label className="searchBox">
           <span>Search</span>
           <button className="searchToggle" type="button" onClick={() => setMenuOpen((open) => !open)} aria-expanded={menuOpen} aria-controls="sidebar-options" aria-label={menuOpen ? "Close options" : "Open options"}>
-            {menuOpen ? "▲" : "▼"}
+            {menuOpen ? "Up" : "Dn"}
           </button>
           <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search..." />
         </label>

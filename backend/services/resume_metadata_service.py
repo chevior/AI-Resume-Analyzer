@@ -31,6 +31,14 @@ HIGH_VALUE_KEYWORDS = [
     "testing", "github", "agile", "graphql"
 ]
 
+READINESS_WEIGHTS = {
+    "ats": 0.35,
+    "skills": 0.2,
+    "proof": 0.18,
+    "impact": 0.15,
+    "targeting": 0.12,
+}
+
 
 def _contains_any(text_lower, terms):
     return any(term in text_lower for term in terms)
@@ -41,6 +49,115 @@ def _role_match(skills_lower, required_skills):
     missing = [skill for skill in required_skills if skill not in skills_lower]
     score = round((len(matched) / len(required_skills)) * 100) if required_skills else 0
     return matched, missing, score
+
+
+def _readiness_category(score):
+    if score >= 85:
+        return "Application ready"
+    if score >= 70:
+        return "Nearly ready"
+    if score >= 55:
+        return "Needs targeting"
+    return "Needs rebuild"
+
+
+def _build_readiness_breakdown(text_lower, skills, ats_score, jobs, missing_keywords):
+    has_proof = _contains_any(text_lower, ["github", "linkedin", "portfolio", "http"])
+    has_impact = _contains_any(text_lower, ["%", "improved", "increased", "reduced", "optimized", "automated", "saved"])
+    best_job_match = jobs[0]["match"] if jobs else 0
+
+    scores = {
+        "ats": min(100, round(ats_score)),
+        "skills": min(100, round((len(skills) / 10) * 100)),
+        "proof": 100 if has_proof else 35,
+        "impact": 100 if has_impact else 40,
+        "targeting": max(25, min(100, best_job_match - (len(missing_keywords) * 2))),
+    }
+    weighted = round(sum(scores[key] * READINESS_WEIGHTS[key] for key in scores))
+
+    labels = {
+        "ats": "ATS readiness",
+        "skills": "Skill coverage",
+        "proof": "Proof links",
+        "impact": "Measured impact",
+        "targeting": "Role targeting",
+    }
+
+    return {
+        "score": weighted,
+        "category": _readiness_category(weighted),
+        "breakdown": [
+            {
+                "key": key,
+                "label": labels[key],
+                "score": scores[key],
+                "status": "strong" if scores[key] >= 75 else "improve",
+            }
+            for key in ["ats", "skills", "proof", "impact", "targeting"]
+        ],
+    }
+
+
+def _build_action_plan(skills, missing_keywords, weaknesses, jobs, word_count):
+    best_job = jobs[0] if jobs else None
+    priority_skill = ""
+    if best_job and best_job.get("missing_skills"):
+        priority_skill = best_job["missing_skills"][0]
+    elif missing_keywords:
+        priority_skill = missing_keywords[0]
+
+    actions = [
+        {
+            "title": "Tailor the resume headline",
+            "priority": "High",
+            "effort": "10 min",
+            "detail": f"Target the top role fit: {best_job['role']}." if best_job else "Name the exact role you are applying for in the top third.",
+        },
+        {
+            "title": "Add quantified proof",
+            "priority": "High",
+            "effort": "25 min",
+            "detail": "Rewrite two bullets with numbers, percentages, users, speed, savings, or accuracy.",
+        },
+        {
+            "title": "Close the biggest keyword gap",
+            "priority": "Medium",
+            "effort": "30 min",
+            "detail": f"Add honest evidence for {priority_skill} through a project, course, or experience bullet." if priority_skill else "Add missing role keywords only where they match real experience.",
+        },
+        {
+            "title": "Strengthen proof links",
+            "priority": "Medium",
+            "effort": "15 min",
+            "detail": "Add GitHub, LinkedIn, portfolio, or deployed project links near contact details.",
+        },
+    ]
+
+    if word_count < 250:
+        actions.insert(1, {
+            "title": "Expand thin resume sections",
+            "priority": "High",
+            "effort": "20 min",
+            "detail": "Add project scope, tools used, constraints, and outcomes so ATS has more context.",
+        })
+
+    if len(skills) < 5:
+        actions.append({
+            "title": "Build a target skill cluster",
+            "priority": "Medium",
+            "effort": "45 min",
+            "detail": "Group related skills under a clear Skills section and mirror target job language.",
+        })
+
+    for weakness in weaknesses[:2]:
+        actions.append({
+            "title": "Fix detected weakness",
+            "priority": "Low",
+            "effort": "15 min",
+            "detail": weakness,
+        })
+
+    return actions[:6]
 
 
 def build_resume_metadata(text, skills, ats_score, word_count, recommendations, questions):
@@ -112,6 +229,9 @@ def build_resume_metadata(text, skills, ats_score, word_count, recommendations, 
         {"label": "Best job fit", "value": jobs[0]["match"] if jobs else 0, "unit": "%"},
     ]
 
+    readiness = _build_readiness_breakdown(text_lower, skills, ats_score, jobs, missing_keywords)
+    action_plan = _build_action_plan(skills, missing_keywords, weaknesses, jobs, word_count)
+
     interview_questions = questions + [
         f"Walk me through a project where you used {skills[0]}." if skills else "Walk me through your strongest technical project.",
         "Tell me about a time you improved performance, accuracy, or reliability.",
@@ -126,9 +246,11 @@ def build_resume_metadata(text, skills, ats_score, word_count, recommendations, 
     return {
         "dashboard": {
             "headline": "Resume analysis complete",
-            "summary": f"{round(ats_score)}% ATS readiness with {len(skills)} skills detected.",
+            "summary": f"{readiness['score']}% career readiness with {len(skills)} skills detected.",
             "formatting_checks": formatting_checks,
             "keyword_match": max(0, min(100, round(ats_score + (len(skills) * 2) - (len(missing_keywords) * 3)))),
+            "readiness": readiness,
+            "top_actions": action_plan[:3],
         },
         "mock_interview": {
             "title": "Mock interview generated from resume skills",
@@ -145,13 +267,9 @@ def build_resume_metadata(text, skills, ats_score, word_count, recommendations, 
         "jobs": jobs,
         "progress": {
             "items": progress_items,
-            "next_steps": [
-                "Add 2 quantified achievements.",
-                "Add proof links for your strongest projects.",
-                "Compare the resume against one target job description.",
-                "Practice answers for the generated interview questions.",
-            ],
+            "next_steps": [action["detail"] for action in action_plan[:4]],
         },
+        "action_plan": action_plan,
         "questions": {
             "interview": interview_questions[:8],
             "screening": [

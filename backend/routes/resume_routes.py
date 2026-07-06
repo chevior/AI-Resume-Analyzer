@@ -18,6 +18,7 @@ def resume_feature_metadata():
             "resume_analyzer": "Strengths, weaknesses, formatting checks, and resume preview.",
             "jobs": "Suggested job roles ranked by required-skill match.",
             "progress": "ATS readiness, skill coverage, gaps, and next steps.",
+            "action_plan": "Prioritized resume fixes with effort and priority labels.",
             "questions": "Interview and recruiter-screening questions.",
             "insights": "Recommendations, high-value missing keywords, and best-role fit.",
         },

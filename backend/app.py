@@ -32,6 +32,8 @@ def get_home_payload():
             "Skill match cards",
             "Missing keyword detector",
             "Job role prediction",
+            "Career readiness score",
+            "Prioritized action plan",
             "Resume strength/weakness report",
             "Interview question generator",
             "Download analysis report as PDF",

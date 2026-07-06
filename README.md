@@ -14,9 +14,11 @@ The project uses a Flask backend for resume processing and metadata generation, 
   - Resume Analyzer
   - Jobs
   - Progress
+  - Action Plan
   - Questions
   - Insight
 - Job description matching
+- Career readiness score with weighted ATS, skills, proof, impact, and targeting signals
 - Backend-verified user profile data
 - Login, registration, and GitHub OAuth support
 - Light and dark UI theme
@@ -155,12 +157,13 @@ When a PDF is uploaded, the backend:
 4. Finds missing high-value keywords.
 5. Generates interview questions.
 6. Ranks suggested jobs by skill match.
-7. Builds progress, questions, insights, and analyzer metadata.
-8. Sends the structured result to the React dashboard.
+7. Builds a weighted career readiness score.
+8. Creates a prioritized action plan with effort and priority labels.
+9. Builds progress, questions, insights, and analyzer metadata.
+10. Sends the structured result to the React dashboard.
 
 ## Notes
 
 - User data is currently stored in memory for development.
 - Uploaded resume files are processed in request memory and are not persisted by default.
 - For production, replace the in-memory user store with a database and add persistent report/history storage.
-
