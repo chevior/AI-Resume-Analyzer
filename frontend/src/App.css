@@ -540,6 +540,48 @@ button:disabled {
   background: linear-gradient(90deg, var(--primary), var(--accent));
 }
 
+.jobMatchPanel {
+  display: grid;
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel-2);
+}
+
+.jobMatchPanel > strong {
+  color: var(--primary-dark);
+}
+
+.jobMatchPanel p,
+.jobMatchPanel ul {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.86rem;
+  line-height: 1.35;
+}
+
+.jobMatchPanel ul {
+  display: grid;
+  gap: 5px;
+  padding-left: 18px;
+}
+
+.matchColumns {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.matchColumns span {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
 .feedbackCard {
   display: grid;
   gap: 10px;
@@ -709,6 +751,24 @@ button:disabled {
   padding: 6px 11px;
   font-size: 0.84rem;
   font-weight: 850;
+}
+
+.chipCloud.compact em {
+  display: inline-flex;
+  min-height: 26px;
+  align-items: center;
+  border-radius: 999px;
+  background: var(--primary-soft);
+  color: var(--primary-dark);
+  padding: 5px 9px;
+  font-size: 0.78rem;
+  font-style: normal;
+  font-weight: 850;
+}
+
+.chipCloud.compact.missing em {
+  background: var(--accent-soft);
+  color: var(--accent);
 }
 
 .chipCloud.missing span,
@@ -1064,6 +1124,7 @@ button:disabled {
   .featureGrid,
   .planBoard,
   .kitGrid,
+  .matchColumns,
   .metricStrip,
   .quickActions,
   .modalButtons {

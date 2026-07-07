@@ -470,7 +470,25 @@ function App() {
           <div className="matchBar"><span style={{ width: `${jobMatch?.match_score ?? metadata.dashboard?.keyword_match ?? Math.min(currentScore + 7, 96)}%` }} /></div>
           <textarea value={jobDescription} onChange={(e) => setJobDescription(e.target.value)} placeholder="Paste a job description to compare..." />
           <button className="secondaryButton fullButton" onClick={compareJob} disabled={loading}>Compare Job</button>
-          {jobMatch && <p className="miniCopy">{jobMatch.recommendation}</p>}
+          {jobMatch && (
+            <div className="jobMatchPanel">
+              <strong>{jobMatch.fit_level}</strong>
+              <p>{jobMatch.summary || jobMatch.recommendation}</p>
+              <div className="matchColumns">
+                <div>
+                  <span>Matched</span>
+                  <div className="chipCloud compact">{(jobMatch.matched_skills?.length ? jobMatch.matched_skills : ["None"]).map((skill) => <em key={skill}>{skill}</em>)}</div>
+                </div>
+                <div>
+                  <span>Missing</span>
+                  <div className="chipCloud compact missing">{(jobMatch.missing_skills?.length ? jobMatch.missing_skills : ["None"]).map((skill) => <em key={skill}>{skill}</em>)}</div>
+                </div>
+              </div>
+              <ul>
+                {(jobMatch.keyword_plan || []).slice(0, 3).map((item) => <li key={item}>{item}</li>)}
+              </ul>
+            </div>
+          )}
         </section>
 
         <section className="card feedbackCard">
@@ -569,7 +587,7 @@ function App() {
             <div className="card jobCard" key={job.role}>
               <span className="eyebrow">{job.company}</span>
               <h3>{job.role}</h3>
-              <ScoreRing score={jobMatch?.match_score || job.match} />
+              <ScoreRing score={job.match} />
               <div className="chipCloud">{job.skills.map((skill) => <span key={skill}>{skill}</span>)}</div>
               <p>{job.recommendation || `${job.matched_skills?.length || 0} matched skills, ${job.missing_skills?.length || 0} gaps`}</p>
             </div>

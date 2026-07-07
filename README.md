@@ -15,10 +15,12 @@ The project uses a Flask backend for resume processing and metadata generation, 
   - Jobs
   - Progress
   - Action Plan
+  - Application Kit
   - Questions
   - Insight
-- Job description matching
+- Job description matching with matched/missing keyword plans
 - Career readiness score with weighted ATS, skills, proof, impact, and targeting signals
+- Recruiter pitch, cover-note bullets, and application checklist
 - Backend-verified user profile data
 - Login, registration, and GitHub OAuth support
 - Light and dark UI theme
@@ -159,8 +161,9 @@ When a PDF is uploaded, the backend:
 6. Ranks suggested jobs by skill match.
 7. Builds a weighted career readiness score.
 8. Creates a prioritized action plan with effort and priority labels.
-9. Builds progress, questions, insights, and analyzer metadata.
-10. Sends the structured result to the React dashboard.
+9. Generates an application kit with pitch, cover-note bullets, and checklist.
+10. Builds progress, questions, insights, and analyzer metadata.
+11. Sends the structured result to the React dashboard.
 
 ## Notes
 

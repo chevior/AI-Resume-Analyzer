@@ -180,16 +180,29 @@ def job_match():
     if not job_description.strip():
         return jsonify({"error": "Job description required."}), 400
 
+    resume_skills_lower = [skill.lower() for skill in resume_skills]
     job_skills = extract_skills(job_description)
-    matched = [s for s in resume_skills if s in job_skills]
-    missing = [s for s in job_skills if s not in resume_skills]
+    matched = [skill for skill in job_skills if skill in resume_skills_lower]
+    missing = [skill for skill in job_skills if skill not in resume_skills_lower]
     score = int(len(matched) / len(job_skills) * 100) if job_skills else 0
+    fit_level = "Strong fit" if score >= 75 else "Moderate fit" if score >= 45 else "Low fit"
+    keyword_plan = [
+        f"Add resume evidence for {skill}." for skill in missing[:4]
+    ] or ["Keep role keywords consistent across summary, skills, and project bullets."]
+    summary = (
+        f"{fit_level}: {len(matched)} of {len(job_skills)} detected job keywords matched."
+        if job_skills else
+        "No known technical keywords were detected in the job description."
+    )
 
     return jsonify({
         "success": True,
         "matched_skills": matched,
         "missing_skills": missing,
         "match_score": score,
+        "fit_level": fit_level,
+        "summary": summary,
+        "keyword_plan": keyword_plan,
         "total_job_skills": len(job_skills),
-        "recommendation": "Great alignment!" if not missing else f"Add {len(missing)} missing skills."
+        "recommendation": "Great alignment!" if not missing else f"Add evidence for {len(missing)} missing skills."
     })

@@ -34,6 +34,8 @@ def get_home_payload():
             "Job role prediction",
             "Career readiness score",
             "Prioritized action plan",
+            "Application kit generator",
+            "Detailed job keyword comparison",
             "Resume strength/weakness report",
             "Interview question generator",
             "Download analysis report as PDF",
