@@ -35,6 +35,15 @@ function ScoreRing({ score = 0 }) {
   );
 }
 
+function StepPill({ number, label }) {
+  return (
+    <span className="stepPill">
+      <strong>{number}</strong>
+      {label}
+    </span>
+  );
+}
+
 function uniqueItems(items, limit = 8) {
   const seen = new Set();
   return (items || [])
@@ -418,13 +427,21 @@ function App() {
     <>
       <section className="dashboardHero">
         <div>
-          <span className="eyebrow">Backend-calculated dashboard</span>
+          <span className="eyebrow">Resume workspace</span>
           <h2>{result ? metadata.dashboard?.headline || `New CV: ${uploadHistory[0]?.name || "Resume.pdf"}` : "Analyze your resume like a hiring platform"}</h2>
           <p>{result ? metadata.dashboard?.summary || "Your resume has been analyzed." : "Upload a PDF resume to unlock ATS scoring, keyword match, job fit, and interview prep."}</p>
+          <div className="workflowRail">
+            <StepPill number="1" label="Upload" />
+            <StepPill number="2" label="Review" />
+            <StepPill number="3" label="Apply" />
+          </div>
         </div>
-        <button className="primaryButton" onClick={() => user ? document.getElementById("resume-file")?.click() : setAuthMode("login")}>
-          {user ? "Upload New Resume" : "Login to Start"}
-        </button>
+        <div className="heroActions">
+          <button className="primaryButton" onClick={() => user ? document.getElementById("resume-file")?.click() : setAuthMode("login")}>
+            {user ? "Upload Resume" : "Login to Start"}
+          </button>
+          <button className="secondaryButton" onClick={() => setActiveSection("action-plan")}>View Plan</button>
+        </div>
       </section>
 
       <section className="metricStrip">
@@ -768,8 +785,13 @@ function App() {
       <main className="workspace">
         <header className="appTopbar">
           <div>
-            <span className="eyebrow">Dashboard</span>
+            <span className="eyebrow">{user ? "Signed in workspace" : "Guest workspace"}</span>
             <h1>{NAV_ITEMS.find((item) => item.id === activeSection)?.label || "Dashboard"}</h1>
+          </div>
+          <div className="topbarActions">
+            <button className="secondaryButton" onClick={() => setActiveSection("application-kit")}>Application Kit</button>
+            <button className="secondaryButton" onClick={downloadReport}>Report</button>
+            <button className="primaryButton" onClick={() => user ? document.getElementById("resume-file")?.click() : setAuthMode("login")}>Upload</button>
           </div>
         </header>
 
