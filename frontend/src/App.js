@@ -12,6 +12,7 @@ const NAV_ITEMS = [
   { id: "jobs", label: "Jobs", mark: "J" },
   { id: "progress", label: "Progress", mark: "P" },
   { id: "action-plan", label: "Action Plan", mark: "N" },
+  { id: "application-kit", label: "Application Kit", mark: "K" },
   { id: "questions", label: "Questions", mark: "Q" },
   { id: "insights", label: "Insight", mark: "I" },
 ];
@@ -177,6 +178,20 @@ function App() {
     { title: "Compare one job", priority: "Medium", effort: "5 min", detail: "Paste a job description to identify exact keyword gaps." },
     { title: "Practice questions", priority: "Medium", effort: "15 min", detail: "Use generated interview prompts after analysis." },
   ];
+  const applicationKit = metadata.application_kit || {
+    target_role: jobs[0]?.role || "Target role",
+    pitch: "Upload a resume to generate a recruiter pitch and application checklist.",
+    cover_note: [
+      "Run a resume scan to build cover-note bullets from your real skills.",
+      "Compare a target job to tailor the language before applying.",
+    ],
+    checklist: [
+      "Resume is uploaded and analyzed.",
+      "Target job description is compared.",
+      "Report is downloaded before applying.",
+    ],
+    follow_up: ["Follow up after applying with one concise proof point."],
+  };
   const progressItems = metadata.progress?.items?.length ? metadata.progress.items : [
     { label: "ATS readiness", value: currentScore, unit: "%" },
     { label: "Skills detected", value: extractedSkills.length, unit: "" },
@@ -378,6 +393,11 @@ function App() {
       "",
       "Action Plan:",
       ...actionPlan.map((action) => `${action.priority}: ${action.title} (${action.effort}) - ${action.detail}`),
+      "",
+      "Application Kit:",
+      `Target Role: ${applicationKit.target_role}`,
+      `Pitch: ${applicationKit.pitch}`,
+      ...applicationKit.cover_note.map((item) => `Cover Note: ${item}`),
       "",
       "Recommendations:",
       ...(metadata.insights?.recommendations?.length ? metadata.insights.recommendations : result?.recommendations?.length ? result.recommendations : ["Add measurable results, targeted keywords, and links to proof of work."]),
@@ -604,6 +624,34 @@ function App() {
                 </div>
               </article>
             ))}
+          </div>
+        </section>
+      );
+    }
+    if (activeSection === "application-kit") {
+      return (
+        <section className="featurePanel">
+          <div className="featureHeader">
+            <span className="eyebrow">{applicationKit.target_role}</span>
+            <h2>Application Kit</h2>
+            <p>{applicationKit.pitch}</p>
+            <button className="primaryButton" onClick={hasAnalysis ? downloadReport : openUploadFlow}>{hasAnalysis ? "Download kit" : "Upload resume"}</button>
+          </div>
+          <div className="kitGrid">
+            <section className="kitPanel">
+              <h3>Cover Note Bullets</h3>
+              {applicationKit.cover_note.map((item, index) => <p key={`${item}-${index}`}>{item}</p>)}
+            </section>
+            <section className="kitPanel">
+              <h3>Application Checklist</h3>
+              {applicationKit.checklist.map((item, index) => (
+                <div className="kitCheck" key={`${item}-${index}`}><span>{index + 1}</span>{item}</div>
+              ))}
+            </section>
+            <section className="kitPanel kitWide">
+              <h3>Follow Up</h3>
+              {applicationKit.follow_up.map((item, index) => <p key={`${item}-${index}`}>{item}</p>)}
+            </section>
           </div>
         </section>
       );

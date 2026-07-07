@@ -19,6 +19,7 @@ def resume_feature_metadata():
             "jobs": "Suggested job roles ranked by required-skill match.",
             "progress": "ATS readiness, skill coverage, gaps, and next steps.",
             "action_plan": "Prioritized resume fixes with effort and priority labels.",
+            "application_kit": "Recruiter pitch, cover-note bullets, and application checklist.",
             "questions": "Interview and recruiter-screening questions.",
             "insights": "Recommendations, high-value missing keywords, and best-role fit.",
         },

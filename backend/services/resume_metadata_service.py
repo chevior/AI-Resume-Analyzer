@@ -160,6 +160,48 @@ def _build_action_plan(skills, missing_keywords, weaknesses, jobs, word_count):
     return actions[:6]
 
 
+def _build_application_kit(skills, jobs, readiness, action_plan):
+    best_job = jobs[0] if jobs else None
+    top_skills = skills[:4] or ["problem solving", "learning quickly", "team collaboration"]
+    target_role = best_job["role"] if best_job else "target role"
+    role_match = best_job["match"] if best_job else readiness["score"]
+
+    pitch = (
+        f"I am targeting {target_role} roles with strengths in "
+        f"{', '.join(top_skills[:3])}. My resume currently shows {readiness['score']}% "
+        f"career readiness and a {role_match}% fit for this role family."
+    )
+
+    cover_note = [
+        f"Lead with {top_skills[0]} and connect it to one relevant project outcome.",
+        f"Mirror the job description language for {target_role} without adding unsupported claims.",
+        "Add one quantified result in the first half of the resume before applying.",
+    ]
+
+    if best_job and best_job.get("missing_skills"):
+        cover_note.append(f"Address the top gap honestly: {best_job['missing_skills'][0]}.")
+
+    checklist = [
+        "Resume filename is role-specific and professional.",
+        "Contact details include LinkedIn, GitHub, or portfolio.",
+        "Top project has tools, scope, and measurable result.",
+        "Resume keywords match the target job description.",
+        "Interview answers are prepared for the strongest project.",
+    ]
+
+    return {
+        "target_role": target_role,
+        "pitch": pitch,
+        "cover_note": cover_note[:4],
+        "checklist": checklist,
+        "follow_up": [
+            "Send a concise follow-up after 3-5 business days.",
+            "Mention the target role and one proof point from the resume.",
+            f"Keep improving: {action_plan[0]['title'] if action_plan else 'tailor the resume headline'}.",
+        ],
+    }
+
+
 def build_resume_metadata(text, skills, ats_score, word_count, recommendations, questions):
     text_lower = text.lower()
     skills_lower = [skill.lower() for skill in skills]
@@ -231,6 +273,7 @@ def build_resume_metadata(text, skills, ats_score, word_count, recommendations, 
 
     readiness = _build_readiness_breakdown(text_lower, skills, ats_score, jobs, missing_keywords)
     action_plan = _build_action_plan(skills, missing_keywords, weaknesses, jobs, word_count)
+    application_kit = _build_application_kit(skills, jobs, readiness, action_plan)
 
     interview_questions = questions + [
         f"Walk me through a project where you used {skills[0]}." if skills else "Walk me through your strongest technical project.",
@@ -270,6 +313,7 @@ def build_resume_metadata(text, skills, ats_score, word_count, recommendations, 
             "next_steps": [action["detail"] for action in action_plan[:4]],
         },
         "action_plan": action_plan,
+        "application_kit": application_kit,
         "questions": {
             "interview": interview_questions[:8],
             "screening": [

@@ -901,6 +901,61 @@ button:disabled {
   line-height: 1.42;
 }
 
+.kitGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.kitPanel {
+  display: grid;
+  gap: 10px;
+  align-content: start;
+  min-height: 180px;
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--panel) 94%, transparent);
+  box-shadow: 0 8px 18px rgba(13, 32, 45, 0.05);
+}
+
+.kitWide {
+  grid-column: 1 / -1;
+  min-height: auto;
+}
+
+.kitPanel h3 {
+  margin: 0;
+}
+
+.kitPanel p {
+  margin: 0;
+  color: color-mix(in srgb, var(--text) 78%, var(--muted));
+  line-height: 1.42;
+}
+
+.kitCheck {
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr);
+  align-items: center;
+  gap: 10px;
+  min-height: 38px;
+  color: color-mix(in srgb, var(--text) 82%, var(--muted));
+  font-weight: 750;
+}
+
+.kitCheck span {
+  width: 24px;
+  height: 24px;
+  display: grid;
+  place-items: center;
+  border-radius: 6px;
+  background: var(--primary-soft);
+  color: var(--primary-dark);
+  font-size: 0.72rem;
+  font-weight: 900;
+}
+
 .modalBackdrop {
   position: fixed;
   inset: 0;
@@ -1008,6 +1063,7 @@ button:disabled {
   .featureList,
   .featureGrid,
   .planBoard,
+  .kitGrid,
   .metricStrip,
   .quickActions,
   .modalButtons {
