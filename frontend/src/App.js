@@ -3,7 +3,6 @@ import axios from "axios";
 import "./App.css";
 
 const API_BASE_URL = "http://127.0.0.1:5000";
-const PROFILE_IMAGE = "/resumenova-profile.svg";
 
 const NAV_ITEMS = [
   { id: "dashboard", label: "Dashboard", mark: "D" },
@@ -74,7 +73,6 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [search, setSearch] = useState("");
-  const [menuOpen, setMenuOpen] = useState(true);
 
   useEffect(() => {
     const saved = localStorage.getItem("resumeAppState");
@@ -427,9 +425,9 @@ function App() {
     <>
       <section className="dashboardHero">
         <div>
-          <span className="eyebrow">Resume workspace</span>
-          <h2>{result ? metadata.dashboard?.headline || `New CV: ${uploadHistory[0]?.name || "Resume.pdf"}` : "Analyze your resume like a hiring platform"}</h2>
-          <p>{result ? metadata.dashboard?.summary || "Your resume has been analyzed." : "Upload a PDF resume to unlock ATS scoring, keyword match, job fit, and interview prep."}</p>
+          <span className="eyebrow">Resume review</span>
+          <h2>{result ? metadata.dashboard?.headline || `New CV: ${uploadHistory[0]?.name || "Resume.pdf"}` : "Professional resume analysis"}</h2>
+          <p>{result ? metadata.dashboard?.summary || "Your resume has been analyzed." : "Upload a PDF to review score, keywords, and next steps."}</p>
           <div className="workflowRail">
             <StepPill number="1" label="Upload" />
             <StepPill number="2" label="Review" />
@@ -438,9 +436,9 @@ function App() {
         </div>
         <div className="heroActions">
           <button className="primaryButton" onClick={() => user ? document.getElementById("resume-file")?.click() : setAuthMode("login")}>
-            {user ? "Upload Resume" : "Login to Start"}
+            {user ? "Upload resume" : "Sign in to start"}
           </button>
-          <button className="secondaryButton" onClick={() => setActiveSection("action-plan")}>View Plan</button>
+          <button className="secondaryButton" onClick={() => setActiveSection("action-plan")}>View plan</button>
         </div>
       </section>
 
@@ -454,39 +452,44 @@ function App() {
       </section>
 
       <div className="dashboardGrid">
-        <section className="card scoreCard">
-          <div className="cardTitle">
-            <h3>ATS Analysis Score</h3>
-            <span>{result?.match_level || "Sample view"}</span>
-          </div>
-          <ScoreRing score={currentScore} />
-          <h2>{result ? uploadHistory[0]?.name : "Resume.pdf"}</h2>
-          <p>{result ? "Your resume has been analyzed" : "Use demo view or upload your own PDF"}</p>
-          <div className="quickActions">
-            <button className="secondaryButton" onClick={downloadReport}>Download Report</button>
-            <button className="secondaryButton" onClick={() => document.getElementById("resume-file")?.click()}>Upload Resume</button>
-          </div>
-        </section>
-
         <section className="card uploadCard">
-          <h3>Resume Analyzer</h3>
-          <input id="resume-file" type="file" accept=".pdf" onChange={handleFileChange} />
+          <span className="eyebrow">Step 1</span>
+          <h3>Upload and analyze</h3>
+          <input id="resume-file" className="hiddenFileInput" type="file" accept=".pdf" onChange={handleFileChange} />
+          <label className="fileDropZone" htmlFor="resume-file">
+            <strong>{file ? "Selected resume" : "Choose PDF resume"}</strong>
+            <span>{file ? file.name : "PDF only, up to 6MB"}</span>
+          </label>
           <div className="fileMeta">
             <span>{file ? file.name : "PDF up to 6MB"}</span>
             <strong>{uploadCount} scans</strong>
           </div>
-          <button className="primaryButton fullButton" onClick={uploadResume} disabled={loading}>{loading ? "Analyzing..." : "Run ATS Analysis"}</button>
+          <button className="primaryButton fullButton" onClick={uploadResume} disabled={loading}>{loading ? "Analyzing..." : "Run analysis"}</button>
           {error && <div className="alertBox alertError">{error}</div>}
+        </section>
+
+        <section className="card scoreCard">
+          <div className="cardTitle">
+            <h3>ATS score</h3>
+            <span>{result?.match_level || "Demo data"}</span>
+          </div>
+          <ScoreRing score={currentScore} />
+          <h2>{result ? uploadHistory[0]?.name : "Resume.pdf"}</h2>
+          <p>{result ? "Your resume has been analyzed." : "Upload your resume to replace the demo data."}</p>
+          <div className="quickActions">
+            <button className="secondaryButton" onClick={downloadReport}>Download report</button>
+            <button className="secondaryButton" onClick={() => document.getElementById("resume-file")?.click()}>Upload resume</button>
+          </div>
         </section>
 
         <section className="card keywordCard">
           <div className="cardTitle">
-            <h3>Keyword Match</h3>
+            <h3>Job keyword match</h3>
             <span>{jobMatch ? `${jobMatch.match_score}%` : `${metadata.dashboard?.keyword_match ?? Math.min(currentScore + 7, 96)}%`}</span>
           </div>
           <div className="matchBar"><span style={{ width: `${jobMatch?.match_score ?? metadata.dashboard?.keyword_match ?? Math.min(currentScore + 7, 96)}%` }} /></div>
           <textarea value={jobDescription} onChange={(e) => setJobDescription(e.target.value)} placeholder="Paste a job description to compare..." />
-          <button className="secondaryButton fullButton" onClick={compareJob} disabled={loading}>Compare Job</button>
+          <button className="secondaryButton fullButton" onClick={compareJob} disabled={loading}>Compare job</button>
           {jobMatch && (
             <div className="jobMatchPanel">
               <strong>{jobMatch.fit_level}</strong>
@@ -509,7 +512,7 @@ function App() {
         </section>
 
         <section className="card feedbackCard">
-          <h3>Formatting Feedback</h3>
+          <h3>Formatting checks</h3>
           {formatChecks.map((check) => (
             <div className={`checkRow ${check.status}`} key={check.label}>
               <span>{check.status === "pass" ? "OK" : "FIX"}</span>
@@ -525,7 +528,7 @@ function App() {
           </div>
           <div className="readinessScore">
             <strong>{readiness.score}%</strong>
-            <p>{result ? "Weighted from ATS score, skills, proof, impact, and target-role fit." : "Sample view until you upload a resume."}</p>
+            <p>{result ? "Weighted from ATS score, skills, proof, impact, and target-role fit." : "Demo readiness until you upload a resume."}</p>
           </div>
           <div className="readinessList">
             {readiness.breakdown.map((item) => (
@@ -560,7 +563,7 @@ function App() {
         </section>
 
         <section className="card chipCard warningCard">
-          <h3>Missing High-Value Keywords</h3>
+          <h3>Missing keywords</h3>
           <div className="chipCloud missing">{missingSkills.map((skill) => <span key={skill}>+ {skill}</span>)}</div>
         </section>
       </div>
@@ -725,14 +728,13 @@ function App() {
     <div className="appFrame">
       <aside className="sidebar">
         <div className="brandBlock">
-          <img className="brandMark" src={PROFILE_IMAGE} alt="ResumeNova profile" />
-          <strong>ResumeNova</strong>
+          <span className="brandMark" aria-hidden="true">RN</span>
+          <div>
+            <strong>ResumeNova</strong>
+            <small>Resume workspace</small>
+          </div>
         </div>
         <section className="accountPanel">
-          <div className="accountModePill">
-            <span className="modeIcon">ON</span>
-            <strong>{user ? "Signed In" : "Guest Mode"}</strong>
-          </div>
           {user ? (
             <div className="avatarBlock" title={user.profile_verified ? `Verified by ${user.verified_by}` : "Profile not verified"}>
               <span className="avatarInitials">{user.initials || user.username?.slice(0, 2).toUpperCase()}</span>
@@ -745,41 +747,37 @@ function App() {
             <div className="avatarBlock">
               <span className="avatarInitials">GN</span>
               <div>
-                <strong>Guest</strong>
-                <small>Login to analyze</small>
+                <strong>Guest workspace</strong>
+                <small>Sign in to analyze resumes</small>
               </div>
             </div>
           )}
           <div className={user ? "accountActions" : "accountActions guestActions"}>
             <button className="iconButton themeAction" onClick={() => setTheme(theme === "light" ? "dark" : "light")} aria-label="Toggle theme">
-              <span>{theme === "light" ? "Moon" : "Sun"}</span>{theme === "light" ? "Dark" : "Light"}
+              {theme === "light" ? "Dark mode" : "Light mode"}
             </button>
             {user ? (
               <button className="secondaryButton" onClick={handleLogout}>Logout</button>
             ) : (
               <>
-                <button className="secondaryButton" onClick={() => setAuthMode("login")}>Login</button>
-                <button className="primaryButton" onClick={() => setAuthMode("register")}>Sign Up</button>
+                <button className="secondaryButton" onClick={() => setAuthMode("login")}>Sign in</button>
+                <button className="primaryButton" onClick={() => setAuthMode("register")}>Create account</button>
               </>
             )}
           </div>
         </section>
         <label className="searchBox">
           <span>Search</span>
-          <button className="searchToggle" type="button" onClick={() => setMenuOpen((open) => !open)} aria-expanded={menuOpen} aria-controls="sidebar-options" aria-label={menuOpen ? "Close options" : "Open options"}>
-            {menuOpen ? "Up" : "Dn"}
-          </button>
-          <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search..." />
+          <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Find section..." />
         </label>
-        {menuOpen && (
-          <nav className="sideNav" id="sidebar-options">
-            {NAV_ITEMS.filter((item) => item.label.toLowerCase().includes(search.toLowerCase())).map((item) => (
-              <button key={item.id} className={activeSection === item.id ? "active" : ""} onClick={() => setActiveSection(item.id)}>
-                <span>{item.mark}</span>{item.label}
-              </button>
-            ))}
-          </nav>
-        )}
+        <span className="navLabel">Workspace</span>
+        <nav className="sideNav" id="sidebar-options">
+          {NAV_ITEMS.filter((item) => item.label.toLowerCase().includes(search.toLowerCase())).map((item) => (
+            <button key={item.id} className={activeSection === item.id ? "active" : ""} onClick={() => setActiveSection(item.id)}>
+              <span>{item.mark}</span>{item.label}
+            </button>
+          ))}
+        </nav>
       </aside>
 
       <main className="workspace">
@@ -790,8 +788,8 @@ function App() {
           </div>
           <div className="topbarActions">
             <button className="secondaryButton" onClick={() => setActiveSection("application-kit")}>Application Kit</button>
-            <button className="secondaryButton" onClick={downloadReport}>Report</button>
-            <button className="primaryButton" onClick={() => user ? document.getElementById("resume-file")?.click() : setAuthMode("login")}>Upload</button>
+            <button className="secondaryButton" onClick={downloadReport}>Download report</button>
+            <button className="primaryButton" onClick={() => user ? document.getElementById("resume-file")?.click() : setAuthMode("login")}>Upload resume</button>
           </div>
         </header>
 

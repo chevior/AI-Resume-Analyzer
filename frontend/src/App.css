@@ -37,11 +37,16 @@
   box-sizing: border-box;
 }
 
+html {
+  overflow-x: hidden;
+}
+
 body {
   margin: 0;
   color: var(--text);
   background: var(--bg);
   font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  overflow-x: hidden;
 }
 
 button,
@@ -49,10 +54,25 @@ input,
 textarea,
 select {
   font: inherit;
+  min-width: 0;
 }
 
 button {
   cursor: pointer;
+  white-space: normal;
+}
+
+p,
+h1,
+h2,
+h3,
+strong,
+span,
+small,
+button,
+input,
+textarea {
+  overflow-wrap: anywhere;
 }
 
 button:focus-visible,
@@ -69,7 +89,7 @@ button:disabled {
 
 .appFrame {
   display: grid;
-  grid-template-columns: 268px minmax(0, 1fr);
+  grid-template-columns: 292px minmax(0, 1fr);
   gap: 18px;
   min-height: 100vh;
   padding: 18px;
@@ -80,9 +100,9 @@ button:disabled {
   top: 24px;
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 14px;
   height: calc(100vh - 48px);
-  padding: 18px;
+  padding: 16px;
   overflow-y: auto;
   border: 1px solid var(--line);
   border-radius: 8px;
@@ -93,52 +113,52 @@ button:disabled {
 .brandBlock {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
+  min-height: 50px;
+  padding: 6px 2px 12px;
+  border-bottom: 1px solid var(--line);
+}
+
+.brandBlock div {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.brandBlock strong {
   font-size: 1.05rem;
+  line-height: 1.1;
+}
+
+.brandBlock small {
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 750;
 }
 
 .brandMark {
   width: 42px;
   height: 42px;
   flex: 0 0 auto;
+  display: grid;
+  place-items: center;
   border: 2px solid color-mix(in srgb, var(--primary) 35%, transparent);
   border-radius: 50%;
-  background: var(--panel-2);
+  background: var(--primary);
+  color: #fff;
+  font-size: 0.82rem;
+  font-weight: 950;
   box-shadow: 0 8px 22px rgba(12, 159, 145, 0.2);
-  object-fit: cover;
 }
 
 .accountPanel {
   display: grid;
-  gap: 14px;
-  padding: 14px;
-  border: 1px solid color-mix(in srgb, var(--line) 82%, transparent);
-  border-radius: 8px;
-  background: color-mix(in srgb, var(--panel) 96%, transparent);
+  gap: 10px;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
   box-shadow: none;
-}
-
-.accountModePill {
-  display: inline-flex;
-  align-items: center;
-  justify-self: start;
-  gap: 9px;
-  min-height: 38px;
-  padding: 8px 16px;
-  border-radius: 8px;
-  background: linear-gradient(135deg, var(--primary), #0697a8);
-  color: #fff;
-  box-shadow: 0 10px 22px rgba(12, 159, 145, 0.18);
-}
-
-.accountModePill .modeIcon {
-  font-size: 0.74rem;
-  color: #fff;
-}
-
-.accountModePill strong {
-  font-size: 0.94rem;
-  font-weight: 900;
 }
 
 .accountActions {
@@ -148,15 +168,19 @@ button:disabled {
 }
 
 .accountActions.guestActions {
-  grid-template-columns: 0.95fr 1fr 1.1fr;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 .accountActions button {
   min-width: 0;
-  min-height: 42px;
-  padding: 8px 10px;
-  font-size: 0.86rem;
-  box-shadow: 0 8px 18px rgba(13, 32, 45, 0.08);
+  min-height: 40px;
+  padding: 8px;
+  font-size: 0.82rem;
+  box-shadow: none;
+}
+
+.accountActions.guestActions .themeAction {
+  grid-column: 1 / -1;
 }
 
 .accountActions .primaryButton {
@@ -168,19 +192,16 @@ button:disabled {
   align-items: center;
   justify-content: center;
   gap: 6px;
-  background: #172230;
-  border-color: #172230;
-  color: #fff;
-}
-
-.themeAction span {
-  font-size: 0.82rem;
+  background: var(--panel-2);
+  border-color: var(--line);
+  color: var(--text);
 }
 
 .searchBox {
   display: grid;
   position: relative;
   gap: 6px;
+  padding-top: 2px;
   color: var(--muted);
   font-size: 0.78rem;
   font-weight: 750;
@@ -196,7 +217,7 @@ button:disabled {
   border-radius: 8px;
   background: var(--panel-2);
   color: var(--text);
-  padding: 11px 42px 11px 13px;
+  padding: 11px 13px;
   outline: 0;
 }
 
@@ -205,45 +226,38 @@ button:disabled {
   resize: vertical;
 }
 
-.searchToggle {
-  position: absolute;
-  right: 6px;
-  bottom: 6px;
-  width: 30px;
-  height: 30px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  background: var(--panel);
-  color: var(--primary-dark);
-  font-size: 0.82rem;
-  font-weight: 900;
-}
-
 .sideNav {
   display: grid;
-  gap: 7px;
+  gap: 4px;
+}
+
+.navLabel {
+  margin: 2px 0 -4px;
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 900;
+  text-transform: uppercase;
 }
 
 .sideNav button {
-  display: flex;
+  display: grid;
+  grid-template-columns: 26px minmax(0, 1fr);
   align-items: center;
   gap: 10px;
-  min-height: 43px;
+  min-height: 40px;
   border: 0;
   border-radius: 8px;
   background: transparent;
   color: var(--muted);
-  padding: 8px 10px;
+  padding: 7px 9px;
   font-weight: 750;
   text-align: left;
+  min-width: 0;
 }
 
 .sideNav button span {
-  width: 26px;
-  height: 26px;
+  width: 24px;
+  height: 24px;
   display: grid;
   place-items: center;
   border-radius: 8px;
@@ -270,6 +284,11 @@ button:disabled {
   gap: 18px;
   margin-bottom: 18px;
   padding: 4px 2px;
+}
+
+.appTopbar > div:first-child,
+.dashboardHero > div:first-child {
+  min-width: 0;
 }
 
 .topbarActions {
@@ -300,8 +319,8 @@ button:disabled {
   display: flex;
   align-items: center;
   gap: 11px;
-  min-height: 76px;
-  padding: 10px;
+  min-height: 68px;
+  padding: 10px 11px;
   border: 1px solid color-mix(in srgb, var(--primary) 30%, var(--line));
   border-left: 4px solid var(--primary);
   border-radius: 8px;
@@ -311,8 +330,8 @@ button:disabled {
 }
 
 .avatarInitials {
-  width: 48px;
-  height: 48px;
+  width: 42px;
+  height: 42px;
   display: grid;
   place-items: center;
   border: 4px solid #fff;
@@ -330,13 +349,10 @@ button:disabled {
 }
 
 .avatarBlock strong {
-  max-width: 150px;
-  overflow: hidden;
+  max-width: 190px;
   color: var(--text);
   font-size: 0.98rem;
-  line-height: 1.1;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  line-height: 1.2;
 }
 
 .avatarBlock small {
@@ -360,8 +376,14 @@ button:disabled {
   justify-content: space-between;
   gap: 18px;
   margin-bottom: 18px;
-  padding: 22px;
+  padding: 24px;
   border-left: 5px solid var(--primary);
+}
+
+.dashboardHero h2 {
+  max-width: 720px;
+  font-size: clamp(1.7rem, 2.2vw, 2.25rem);
+  line-height: 1.08;
 }
 
 .dashboardHero p,
@@ -369,6 +391,7 @@ button:disabled {
 .miniCopy {
   margin: 8px 0 0;
   color: var(--muted);
+  line-height: 1.45;
 }
 
 .workflowRail,
@@ -414,7 +437,7 @@ button:disabled {
 
 .metricStrip {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   gap: 10px;
   margin-bottom: 18px;
 }
@@ -444,13 +467,13 @@ button:disabled {
 
 .dashboardGrid {
   display: grid;
-  grid-template-columns: repeat(12, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 14px;
 }
 
 .card {
   min-width: 0;
-  padding: 18px;
+  padding: 20px;
 }
 
 .cardTitle {
@@ -472,8 +495,6 @@ button:disabled {
 }
 
 .scoreCard {
-  grid-column: span 4;
-  grid-row: span 2;
   text-align: center;
 }
 
@@ -481,12 +502,16 @@ button:disabled {
 .keywordCard,
 .readinessCard,
 .actionCard {
-  grid-column: span 4;
+  grid-column: auto;
+}
+
+.uploadCard {
+  border-top: 4px solid var(--primary);
 }
 
 .feedbackCard,
 .chipCard {
-  grid-column: span 3;
+  grid-column: auto;
 }
 
 .scoreRing {
@@ -528,7 +553,7 @@ button:disabled {
 .quickActions,
 .modalButtons {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(auto-fit, minmax(135px, 1fr));
   gap: 10px;
 }
 
@@ -581,11 +606,42 @@ button:disabled {
   gap: 12px;
 }
 
-.uploadCard input[type="file"] {
-  min-height: 72px;
-  padding: 20px 13px;
-  border-style: dashed;
+.uploadCard .eyebrow {
+  margin-bottom: -4px;
+}
+
+.hiddenFileInput {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.fileDropZone {
+  display: grid;
+  place-items: center;
+  gap: 8px;
+  min-height: 120px;
+  padding: 20px;
+  border: 1px dashed color-mix(in srgb, var(--primary) 42%, var(--line));
+  border-radius: 8px;
   background: color-mix(in srgb, var(--primary-soft) 44%, var(--panel-2));
+  color: var(--text);
+  text-align: center;
+  cursor: pointer;
+}
+
+.fileDropZone strong {
+  color: var(--primary-dark);
+}
+
+.fileDropZone span {
+  color: var(--muted);
+  font-size: 0.88rem;
 }
 
 .fileMeta {
@@ -595,6 +651,11 @@ button:disabled {
   gap: 12px;
   color: var(--muted);
   font-size: 0.9rem;
+  flex-wrap: wrap;
+}
+
+.fileMeta span {
+  min-width: 0;
 }
 
 .alertBox {
@@ -705,7 +766,7 @@ button:disabled {
 
 .readinessRow {
   display: grid;
-  grid-template-columns: minmax(96px, 1fr) minmax(88px, 1.2fr) 44px;
+  grid-template-columns: minmax(120px, 1fr) minmax(88px, 1.2fr) 48px;
   align-items: center;
   gap: 10px;
   color: var(--muted);
@@ -744,7 +805,7 @@ button:disabled {
 
 .actionItem {
   display: grid;
-  grid-template-columns: 62px minmax(0, 1fr) 56px;
+  grid-template-columns: auto minmax(0, 1fr) auto;
   align-items: center;
   gap: 9px;
   min-height: 48px;
@@ -767,13 +828,12 @@ button:disabled {
   color: var(--accent);
   font-size: 0.7rem;
   font-weight: 900;
+  padding: 3px 9px;
 }
 
 .actionItem strong {
   min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  line-height: 1.25;
 }
 
 .actionItem small {
@@ -784,7 +844,7 @@ button:disabled {
 
 .checkRow {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 10px;
   min-height: 42px;
   padding: 10px;
@@ -793,7 +853,7 @@ button:disabled {
 }
 
 .checkRow span {
-  width: 36px;
+  flex: 0 0 36px;
   color: #fff;
   border-radius: 999px;
   padding: 3px 0;
@@ -835,6 +895,7 @@ button:disabled {
   padding: 6px 11px;
   font-size: 0.84rem;
   font-weight: 850;
+  max-width: 100%;
 }
 
 .chipCloud.compact em {
@@ -912,7 +973,7 @@ button:disabled {
 }
 
 .featureGrid {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 12px;
   overflow: visible;
   border: 0;
@@ -999,7 +1060,7 @@ button:disabled {
 
 .planBoard {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 12px;
 }
 
@@ -1055,7 +1116,7 @@ button:disabled {
 
 .kitGrid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 12px;
 }
 
@@ -1175,14 +1236,7 @@ button:disabled {
   }
 
   .sideNav {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-  }
-
-  .dashboardGrid,
-  .featureList,
-  .featureGrid,
-  .metricStrip {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
   .scoreCard,
@@ -1199,6 +1253,14 @@ button:disabled {
 @media (max-width: 720px) {
   .appFrame {
     padding: 10px;
+  }
+
+  .workspace {
+    order: 1;
+  }
+
+  .sidebar {
+    order: 2;
   }
 
   .appTopbar,
@@ -1227,7 +1289,7 @@ button:disabled {
   }
 
   .accountActions.guestActions {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: 1fr;
   }
 
   .accountPanel {
@@ -1261,5 +1323,88 @@ button:disabled {
   .scoreRing {
     width: 160px;
     height: 160px;
+  }
+}
+
+@media (max-width: 520px) {
+  .appFrame {
+    gap: 12px;
+    padding: 8px;
+    max-width: 100vw;
+    overflow-x: hidden;
+  }
+
+  .sidebar,
+  .workspace,
+  .appTopbar,
+  .dashboardHero,
+  .topbarActions,
+  .heroActions {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+  }
+
+  .dashboardHero,
+  .card,
+  .modalCard,
+  .planItem,
+  .kitPanel {
+    padding: 14px;
+  }
+
+  .dashboardHero h2 {
+    max-width: 100%;
+    font-size: 1.38rem;
+    line-height: 1.18;
+    overflow-wrap: anywhere;
+  }
+
+  .dashboardHero p {
+    max-width: 100%;
+    font-size: 0.9rem;
+  }
+
+  .topbarActions,
+  .heroActions,
+  .workflowRail {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .topbarActions button,
+  .heroActions button,
+  .workflowRail .stepPill {
+    flex: 0 0 auto;
+    min-height: 44px;
+    width: 100%;
+  }
+
+  .sideNav {
+    grid-template-columns: 1fr;
+  }
+
+  .sideNav button {
+    align-items: flex-start;
+    min-height: 52px;
+  }
+
+  .readinessRow,
+  .actionItem,
+  .jobCard {
+    grid-template-columns: 1fr;
+  }
+
+  .readinessRow strong,
+  .actionItem small {
+    text-align: left;
+  }
+
+  .jobCard .scoreRing,
+  .jobCard .eyebrow,
+  .jobCard h3,
+  .jobCard p,
+  .jobCard .chipCloud {
+    grid-column: 1;
   }
 }
