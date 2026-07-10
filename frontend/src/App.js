@@ -180,23 +180,29 @@ function App() {
     ],
   };
   const actionPlan = metadata.action_plan?.length ? metadata.action_plan : [
-    { title: "Upload a resume", priority: "High", effort: "2 min", detail: "Analyze a PDF resume to generate personalized next steps." },
-    { title: "Compare one job", priority: "Medium", effort: "5 min", detail: "Paste a job description to identify exact keyword gaps." },
-    { title: "Practice questions", priority: "Medium", effort: "15 min", detail: "Use generated interview prompts after analysis." },
+    { title: "Run the first resume scan", priority: "Start here", effort: "2 min", detail: "Upload a PDF so ResumeNova can extract skills, score ATS readiness, detect formatting issues, and replace demo content with your real profile." },
+    { title: "Target one role clearly", priority: "High impact", effort: "5 min", detail: "Paste a job description after scanning to compare keywords, identify missing requirements, and tune your resume for one specific application." },
+    { title: "Strengthen proof of work", priority: "Quality", effort: "15 min", detail: "Use the recommendations to add measurable outcomes, project links, stronger bullets, and clearer evidence for the roles you want." },
+    { title: "Prepare interview stories", priority: "Practice", effort: "20 min", detail: "Convert resume projects into concise interview examples with situation, action, result, tradeoffs, and lessons learned." },
   ];
   const applicationKit = metadata.application_kit || {
-    target_role: jobs[0]?.role || "Target role",
-    pitch: "Upload a resume to generate a recruiter pitch and application checklist.",
+    target_role: hasAnalysis ? jobs[0]?.role || "Target role" : "Application kit preview",
+    pitch: hasAnalysis ? "Use your resume analysis to prepare role-specific application material." : "After a scan, this page becomes a professional packet for applications: recruiter pitch, cover-note bullets, checklist, and follow-up copy.",
     cover_note: [
-      "Run a resume scan to build cover-note bullets from your real skills.",
-      "Compare a target job to tailor the language before applying.",
+      "Summarize your strongest technical skills in one concise opening line.",
+      "Tie your best project or achievement to the role's most important requirement.",
+      "Use job-match gaps to adjust language before sending the application.",
     ],
     checklist: [
-      "Resume is uploaded and analyzed.",
-      "Target job description is compared.",
-      "Report is downloaded before applying.",
+      "Resume scan completed and highest-priority fixes reviewed.",
+      "Target job description compared for keywords and missing requirements.",
+      "Resume bullets updated with measurable outcomes and stronger proof.",
+      "Report downloaded or saved before submitting the application.",
     ],
-    follow_up: ["Follow up after applying with one concise proof point."],
+    follow_up: [
+      "Send a short follow-up that references the role, one relevant project, and a clear reason you are a fit.",
+      "Keep the message specific: avoid repeating your resume and point to one proof point the recruiter can verify quickly.",
+    ],
   };
   const progressItems = metadata.progress?.items?.length ? metadata.progress.items : [
     { label: "ATS readiness", value: currentScore, unit: "%" },
@@ -222,11 +228,44 @@ function App() {
     window.setTimeout(() => document.getElementById("resume-file")?.click(), 80);
   };
 
-  const requireAnalysisItems = [
-    "Upload a PDF resume to calculate this section from your real resume.",
-    "After analysis, this page will use backend metadata instead of sample data.",
-    "The backend calculates ATS readiness, skills, gaps, jobs, questions, and insights from resume text.",
-  ];
+  const sectionGuidance = {
+    interviews: [
+      "A role-specific warmup round based on your strongest projects and technical skills.",
+      "Behavioral prompts that connect your resume evidence to teamwork, ownership, and impact.",
+      "Follow-up questions that challenge vague bullets and help you prepare stronger examples.",
+      "A practice plan that separates quick answers, deep project stories, and weak areas to rehearse.",
+    ],
+    analyzer: [
+      "ATS score breakdown with formatting, section structure, keyword density, and readability signals.",
+      "Strengths and weaknesses grouped into recruiter-facing language, technical proof, and measurable impact.",
+      "Rewrite suggestions for bullets that need stronger action verbs, numbers, or clearer outcomes.",
+      "A quality checklist for headings, file structure, length, links, and ATS-safe formatting.",
+    ],
+    jobs: [
+      "Ranked role matches based on detected skills, suggested titles, and missing high-value keywords.",
+      "Skill-gap summaries that separate must-have requirements from nice-to-have improvements.",
+      "Job comparison support for pasted descriptions so you can tailor one resume per target role.",
+      "A shortlist of roles where your current resume is strongest and where it needs positioning work.",
+    ],
+    progress: [
+      "A readiness timeline that tracks ATS score, detected skills, priority gaps, and job-match improvement.",
+      "Before-and-after checkpoints for each resume scan so progress is visible instead of guessed.",
+      "Next-step tracking for keyword coverage, proof links, quantified bullets, and interview preparation.",
+      "A focused completion view that shows what is ready, what needs work, and what to do next.",
+    ],
+    questions: [
+      "Technical questions generated from your actual tools, projects, and claimed experience.",
+      "Recruiter screening prompts for background, availability, motivation, and role fit.",
+      "Project deep-dive questions that help you explain decisions, tradeoffs, results, and ownership.",
+      "Concise answer prompts so you can prepare responses without memorizing robotic scripts.",
+    ],
+    insights: [
+      "Priority recommendations that identify the highest-impact changes before you apply.",
+      "Missing keyword analysis connected to target roles instead of generic resume advice.",
+      "Best-role-fit guidance that turns your extracted skills into a clearer positioning strategy.",
+      "A summary of what to improve first across content, formatting, proof, and job targeting.",
+    ],
+  };
 
   const handleLogin = async () => {
     if (!username.trim() || !password.trim()) {
@@ -564,8 +603,8 @@ function App() {
       return (
         <FeaturePanel
           title="Mock Interviews"
-          subtitle={hasAnalysis ? `${metadata.mock_interview?.difficulty || "Resume-based"} practice generated from your resume.` : "Backend-generated interview rounds appear here after resume analysis."}
-          items={hasAnalysis ? questions : requireAnalysisItems}
+          subtitle={hasAnalysis ? `${metadata.mock_interview?.difficulty || "Resume-based"} practice generated from your resume.` : "Prepare for recruiter screens, project deep-dives, and technical follow-ups with prompts tailored to your resume."}
+          items={hasAnalysis ? questions : sectionGuidance.interviews}
           action={hasAnalysis ? "Open question bank" : "Upload resume"}
           onAction={hasAnalysis ? () => setActiveSection("questions") : openUploadFlow}
           status={hasAnalysis ? "Backend generated" : "Waiting for resume"}
@@ -576,13 +615,13 @@ function App() {
       return (
         <FeaturePanel
           title="Resume Analyzer"
-          subtitle={hasAnalysis ? "Backend-calculated strengths, weaknesses, formatting, and improvement tips." : "Upload a resume to run the analyzer against extracted PDF text."}
+          subtitle={hasAnalysis ? "Backend-calculated strengths, weaknesses, formatting, and improvement tips." : "Get a structured review of content quality, ATS readiness, formatting, skills, and proof of impact."}
           items={hasAnalysis ? uniqueItems([
             ...(metadata.resume_analyzer?.strengths || result?.strengths || []),
             ...(metadata.resume_analyzer?.weaknesses || result?.weaknesses || []),
             ...(metadata.resume_analyzer?.formatting_checks?.map((item) => `${item.status.toUpperCase()}: ${item.label}`) || []),
             ...(result?.improvement_tips || []),
-          ], 7) : requireAnalysisItems}
+          ], 7) : sectionGuidance.analyzer}
           action={hasAnalysis ? "Analyze new resume" : "Upload resume"}
           onAction={openUploadFlow}
           status={hasAnalysis ? `${result.word_count || 0} words analyzed` : "No resume analyzed"}
@@ -605,8 +644,8 @@ function App() {
       ) : (
         <FeaturePanel
           title="Jobs"
-          subtitle="Backend-ranked role matches appear here after resume analysis."
-          items={requireAnalysisItems}
+          subtitle="Use your resume data to identify realistic role matches, skill gaps, and better target positions."
+          items={sectionGuidance.jobs}
           action="Upload resume"
           onAction={openUploadFlow}
           status="Waiting for resume"
@@ -617,11 +656,11 @@ function App() {
       return (
         <FeaturePanel
           title="Progress"
-          subtitle={hasAnalysis ? "Track backend-calculated readiness, skill coverage, gaps, and next steps." : "Progress tracking starts after your first resume scan."}
+          subtitle={hasAnalysis ? "Track backend-calculated readiness, skill coverage, gaps, and next steps." : "Turn resume improvement into a trackable workflow with measurable readiness signals."}
           items={hasAnalysis ? uniqueItems([
             ...progressItems.map((item) => `${item.label}: ${item.value}${item.unit}`),
             ...(metadata.progress?.next_steps || []),
-          ], 8) : requireAnalysisItems}
+          ], 8) : sectionGuidance.progress}
           action={hasAnalysis ? "Download report" : "Upload resume"}
           onAction={hasAnalysis ? downloadReport : openUploadFlow}
           status={hasAnalysis ? "Live progress" : "No scan yet"}
@@ -634,7 +673,7 @@ function App() {
           <div className="featureHeader">
             <span className="eyebrow">{hasAnalysis ? readiness.category : "Waiting for resume"}</span>
             <h2>Action Plan</h2>
-            <p>{hasAnalysis ? `Prioritized fixes based on a ${readiness.score}% career readiness score.` : "Upload a resume to generate a prioritized action plan."}</p>
+            <p>{hasAnalysis ? `Prioritized fixes based on a ${readiness.score}% career readiness score.` : "A practical improvement roadmap for resume quality, targeting, job comparison, and interview readiness."}</p>
             <button className="primaryButton" onClick={hasAnalysis ? downloadReport : openUploadFlow}>{hasAnalysis ? "Download report" : "Upload resume"}</button>
           </div>
           <div className="planBoard">
@@ -687,11 +726,11 @@ function App() {
       return (
         <FeaturePanel
           title="Questions"
-          subtitle={hasAnalysis ? "Interview and recruiter-screening questions generated from your resume." : "Upload a resume to generate personalized questions."}
+          subtitle={hasAnalysis ? "Interview and recruiter-screening questions generated from your resume." : "Build a serious question bank for technical, behavioral, recruiter, and project-based interview practice."}
           items={hasAnalysis ? uniqueItems([
             ...questions,
             ...(metadata.questions?.screening || []),
-          ], 8) : requireAnalysisItems}
+          ], 8) : sectionGuidance.questions}
           action={hasAnalysis ? "Download report" : "Upload resume"}
           onAction={hasAnalysis ? downloadReport : openUploadFlow}
           status={hasAnalysis ? `${questions.length} interview prompts` : "Waiting for resume"}
@@ -702,8 +741,8 @@ function App() {
       return (
         <FeaturePanel
           title="Insight"
-          subtitle={hasAnalysis ? "Backend-calculated recommendations, missing keywords, and best-role fit." : "Upload a resume to generate actionable insight."}
-          items={hasAnalysis ? uniqueItems(metadata.insights?.recommendations?.length ? metadata.insights.recommendations : result?.recommendations || [], 7) : requireAnalysisItems}
+          subtitle={hasAnalysis ? "Backend-calculated recommendations, missing keywords, and best-role fit." : "See what your resume is communicating, what it is missing, and how to position it more clearly."}
+          items={hasAnalysis ? uniqueItems(metadata.insights?.recommendations?.length ? metadata.insights.recommendations : result?.recommendations || [], 7) : sectionGuidance.insights}
           action={hasAnalysis ? "Compare job" : "Upload resume"}
           onAction={hasAnalysis ? () => setActiveSection("dashboard") : openUploadFlow}
           status={hasAnalysis ? metadata.insights?.best_role?.role || "Insight ready" : "Waiting for resume"}
