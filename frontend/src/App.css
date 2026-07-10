@@ -88,9 +88,6 @@ button:disabled {
 }
 
 .appFrame {
-  display: grid;
-  grid-template-columns: 82px minmax(0, 1fr);
-  gap: 18px;
   min-height: 100vh;
   padding: 18px;
 }
@@ -236,6 +233,8 @@ button:disabled {
 
 .workspace {
   min-width: 0;
+  max-width: 1240px;
+  margin: 0 auto;
 }
 
 .appTopbar {
@@ -247,9 +246,15 @@ button:disabled {
   padding: 4px 2px;
 }
 
-.appTopbar > div:first-child,
+.topbarIdentity,
 .dashboardHero > div:first-child {
   min-width: 0;
+}
+
+.topbarIdentity {
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
 .topbarActions {
@@ -258,6 +263,36 @@ button:disabled {
   justify-content: flex-end;
   gap: 8px;
   flex-wrap: wrap;
+}
+
+.workspaceNav {
+  display: flex;
+  gap: 8px;
+  margin: 0 0 18px;
+  padding: 6px;
+  overflow-x: auto;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel);
+  box-shadow: var(--soft-shadow);
+}
+
+.workspaceNav button {
+  flex: 0 0 auto;
+  min-height: 38px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--muted);
+  padding: 8px 12px;
+  font-size: 0.86rem;
+  font-weight: 850;
+}
+
+.workspaceNav button.active,
+.workspaceNav button:hover {
+  background: var(--primary-soft);
+  color: var(--primary-dark);
 }
 
 .appTopbar h1,

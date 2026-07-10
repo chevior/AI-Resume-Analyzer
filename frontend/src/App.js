@@ -715,25 +715,14 @@ function App() {
 
   return (
     <div className="appFrame">
-      <aside className="sidebar">
-        <div className="brandBlock">
-          <span className="brandMark" aria-hidden="true">R</span>
-          <strong>ResumeNova</strong>
-        </div>
-        <nav className="sideNav" id="sidebar-options">
-          {NAV_ITEMS.map((item) => (
-            <button key={item.id} className={activeSection === item.id ? "active" : ""} onClick={() => setActiveSection(item.id)} aria-label={item.label} title={item.label}>
-              <span>{item.mark}</span>{item.label}
-            </button>
-          ))}
-        </nav>
-      </aside>
-
       <main className="workspace">
         <header className="appTopbar">
-          <div>
-            <span className="eyebrow">{user ? "Signed in workspace" : "Guest workspace"}</span>
-            <h1>{NAV_ITEMS.find((item) => item.id === activeSection)?.label || "Dashboard"}</h1>
+          <div className="topbarIdentity">
+            <span className="brandMark" aria-hidden="true">R</span>
+            <div>
+              <span className="eyebrow">{user ? "Signed in workspace" : "Guest workspace"}</span>
+              <h1>{NAV_ITEMS.find((item) => item.id === activeSection)?.label || "Dashboard"}</h1>
+            </div>
           </div>
           <div className="topbarActions">
             <button className="secondaryButton" onClick={() => setActiveSection("application-kit")}>Application Kit</button>
@@ -741,6 +730,14 @@ function App() {
             <button className="primaryButton" onClick={() => user ? document.getElementById("resume-file")?.click() : setAuthMode("login")}>Upload resume</button>
           </div>
         </header>
+
+        <nav className="workspaceNav" aria-label="Workspace sections">
+          {NAV_ITEMS.map((item) => (
+            <button key={item.id} className={activeSection === item.id ? "active" : ""} onClick={() => setActiveSection(item.id)}>
+              {item.label}
+            </button>
+          ))}
+        </nav>
 
         {activeSection === "dashboard" ? renderDashboard() : renderFeature()}
       </main>
