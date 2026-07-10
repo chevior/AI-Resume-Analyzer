@@ -287,16 +287,6 @@ function App() {
     }
   };
 
-  const handleLogout = () => {
-    setUser(null);
-    setIsAdmin(false);
-    setResult(null);
-    setFile(null);
-    setJobMatch(null);
-    setActiveSection("dashboard");
-    setError("");
-  };
-
   const handleFileChange = (e) => {
     const selectedFile = e.target.files?.[0];
     if (!selectedFile) return;
@@ -732,35 +722,11 @@ function App() {
         </div>
         <nav className="sideNav" id="sidebar-options">
           {NAV_ITEMS.map((item) => (
-            <button key={item.id} className={activeSection === item.id ? "active" : ""} onClick={() => setActiveSection(item.id)}>
+            <button key={item.id} className={activeSection === item.id ? "active" : ""} onClick={() => setActiveSection(item.id)} aria-label={item.label} title={item.label}>
               <span>{item.mark}</span>{item.label}
             </button>
           ))}
         </nav>
-        <section className="accountPanel">
-          {user && (
-            <div className="avatarBlock" title={user.profile_verified ? `Verified by ${user.verified_by}` : "Profile not verified"}>
-              <span className="avatarInitials">{user.initials || user.username?.slice(0, 2).toUpperCase()}</span>
-              <div>
-                <strong>{user.display_name || user.username}</strong>
-                <small>{user.profile_verified ? "Verified profile" : "Profile"}</small>
-              </div>
-            </div>
-          )}
-          <div className={user ? "accountActions" : "accountActions guestActions"}>
-            <button className="iconButton themeAction" onClick={() => setTheme(theme === "light" ? "dark" : "light")} aria-label="Toggle theme">
-              {theme === "light" ? "Dark" : "Light"}
-            </button>
-            {user ? (
-              <button className="secondaryButton" onClick={handleLogout}>Logout</button>
-            ) : (
-              <>
-                <button className="secondaryButton" onClick={() => setAuthMode("login")}>Sign in</button>
-                <button className="primaryButton" onClick={() => setAuthMode("register")}>Join</button>
-              </>
-            )}
-          </div>
-        </section>
       </aside>
 
       <main className="workspace">

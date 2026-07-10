@@ -89,7 +89,7 @@ button:disabled {
 
 .appFrame {
   display: grid;
-  grid-template-columns: 236px minmax(0, 1fr);
+  grid-template-columns: 82px minmax(0, 1fr);
   gap: 18px;
   min-height: 100vh;
   padding: 18px;
@@ -100,9 +100,10 @@ button:disabled {
   top: 24px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  align-items: center;
+  gap: 18px;
   height: calc(100vh - 48px);
-  padding: 16px 14px;
+  padding: 16px 10px;
   overflow-y: auto;
   border: 1px solid var(--line);
   border-radius: 8px;
@@ -111,22 +112,27 @@ button:disabled {
 }
 
 .brandBlock {
-  display: flex;
-  align-items: center;
-  gap: 10px;
+  display: grid;
+  place-items: center;
+  width: 100%;
   min-height: 44px;
-  padding: 4px 4px 12px;
+  padding: 4px 0 12px;
   border-bottom: 1px solid var(--line);
 }
 
 .brandBlock strong {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
   font-size: 1rem;
   line-height: 1.1;
 }
 
 .brandMark {
-  width: 34px;
-  height: 34px;
+  width: 40px;
+  height: 40px;
   flex: 0 0 auto;
   display: grid;
   place-items: center;
@@ -137,47 +143,6 @@ button:disabled {
   font-size: 0.82rem;
   font-weight: 950;
   box-shadow: 0 8px 22px rgba(12, 159, 145, 0.2);
-}
-
-.accountPanel {
-  display: grid;
-  gap: 8px;
-  margin-top: auto;
-  padding-top: 14px;
-  border-top: 1px solid var(--line);
-  box-shadow: none;
-}
-
-.accountActions {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 8px;
-}
-
-.accountActions.guestActions {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-}
-
-.accountActions button {
-  min-width: 0;
-  min-height: 40px;
-  padding: 8px;
-  font-size: 0.8rem;
-  box-shadow: none;
-}
-
-.accountActions .primaryButton {
-  background: linear-gradient(135deg, var(--primary), #0697a8);
-}
-
-.themeAction {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  background: var(--panel-2);
-  border-color: var(--line);
-  color: var(--text);
 }
 
 .searchBox input,
@@ -201,31 +166,35 @@ button:disabled {
 
 .sideNav {
   display: grid;
-  gap: 5px;
+  justify-items: center;
+  gap: 9px;
+  width: 100%;
 }
 
 .sideNav button {
+  position: relative;
   display: grid;
-  grid-template-columns: 28px minmax(0, 1fr);
-  align-items: center;
-  gap: 9px;
-  min-height: 42px;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  min-height: 46px;
   border: 0;
-  border-radius: 8px;
+  border-radius: 10px;
   background: transparent;
   color: var(--muted);
-  padding: 8px 10px;
+  padding: 0;
   font-weight: 800;
-  text-align: left;
+  font-size: 0;
+  text-align: center;
   min-width: 0;
 }
 
 .sideNav button span {
-  width: 26px;
-  height: 26px;
+  width: 30px;
+  height: 30px;
   display: grid;
   place-items: center;
-  border-radius: 8px;
+  border-radius: 10px;
   background: var(--panel-2);
   color: var(--primary);
   font-size: 0.78rem;
@@ -236,6 +205,33 @@ button:disabled {
 .sideNav button:hover {
   background: var(--primary-soft);
   color: var(--primary-dark);
+}
+
+.sideNav button::after {
+  content: attr(aria-label);
+  position: absolute;
+  left: calc(100% + 10px);
+  top: 50%;
+  z-index: 4;
+  min-width: max-content;
+  padding: 7px 9px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel);
+  color: var(--text);
+  box-shadow: var(--soft-shadow);
+  font-size: 0.78rem;
+  font-weight: 850;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-50%) translateX(-4px);
+  transition: opacity 120ms ease, transform 120ms ease;
+}
+
+.sideNav button:hover::after,
+.sideNav button:focus-visible::after {
+  opacity: 1;
+  transform: translateY(-50%) translateX(0);
 }
 
 .workspace {
@@ -278,52 +274,6 @@ button:disabled {
   font-size: 0.76rem;
   font-weight: 900;
   text-transform: uppercase;
-}
-
-.avatarBlock {
-  display: flex;
-  align-items: center;
-  gap: 11px;
-  min-height: 68px;
-  padding: 10px 11px;
-  border: 1px solid color-mix(in srgb, var(--primary) 30%, var(--line));
-  border-left: 4px solid var(--primary);
-  border-radius: 8px;
-  background:
-    linear-gradient(135deg, color-mix(in srgb, var(--primary-soft) 55%, transparent), transparent 70%),
-    color-mix(in srgb, var(--panel) 94%, transparent);
-}
-
-.avatarInitials {
-  width: 42px;
-  height: 42px;
-  display: grid;
-  place-items: center;
-  border: 4px solid #fff;
-  border-radius: 50%;
-  background: linear-gradient(135deg, var(--primary), #168f84);
-  color: #fff;
-  font-size: 1.05rem;
-  font-weight: 900;
-  box-shadow: 0 10px 20px rgba(12, 159, 145, 0.18);
-}
-
-.avatarBlock div {
-  display: grid;
-  gap: 1px;
-}
-
-.avatarBlock strong {
-  max-width: 190px;
-  color: var(--text);
-  font-size: 0.98rem;
-  line-height: 1.2;
-}
-
-.avatarBlock small {
-  color: color-mix(in srgb, var(--muted) 88%, var(--text));
-  font-size: 0.8rem;
-  font-weight: 650;
 }
 
 .dashboardHero,
@@ -1245,19 +1195,6 @@ button:disabled {
   }
 
   .sidebar {
-    gap: 12px;
-    padding: 12px;
-  }
-
-  .accountActions {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .accountActions.guestActions {
-    grid-template-columns: 1fr;
-  }
-
-  .accountPanel {
     gap: 12px;
     padding: 12px;
   }
