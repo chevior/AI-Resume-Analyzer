@@ -598,8 +598,160 @@ function App() {
     </>
   );
 
+  const renderPreviewFeature = (type) => {
+    const sharedAction = (
+      <button className="primaryButton" onClick={openUploadFlow}>Upload resume</button>
+    );
+
+    if (type === "interviews") {
+      return (
+        <section className="featurePanel interviewPreview">
+          <div className="featureHeader">
+            <span className="eyebrow">Waiting for resume</span>
+            <h2>Mock Interviews</h2>
+            <p>Turn your resume into a focused practice room with recruiter screens, project deep-dives, and technical follow-up questions.</p>
+            {sharedAction}
+          </div>
+          <div className="interviewBoard">
+            {["Warmup", "Behavioral", "Technical", "Project deep-dive"].map((stage, index) => (
+              <article className="interviewStage" key={stage}>
+                <span>{String(index + 1).padStart(2, "0")}</span>
+                <h3>{stage}</h3>
+                <p>{sectionGuidance.interviews[index]}</p>
+              </article>
+            ))}
+          </div>
+        </section>
+      );
+    }
+
+    if (type === "analyzer") {
+      return (
+        <section className="featurePanel analyzerPreview">
+          <div className="featureHeader">
+            <span className="eyebrow">No resume analyzed</span>
+            <h2>Resume Analyzer</h2>
+            <p>A professional review surface for ATS quality, formatting, content strength, keywords, and measurable proof.</p>
+            {sharedAction}
+          </div>
+          <div className="analysisBoard">
+            <article className="analysisScorePreview">
+              <strong>ATS</strong>
+              <span>Ready after scan</span>
+              <p>Score, formatting risk, keyword coverage, and section quality appear here after upload.</p>
+            </article>
+            <div className="analysisChecklist">
+              {sectionGuidance.analyzer.map((item) => (
+                <div className="checkRow pass" key={item}>
+                  <span>OK</span>
+                  <p>{item}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      );
+    }
+
+    if (type === "jobs") {
+      return (
+        <section className="featurePanel jobsPreview">
+          <div className="featureHeader">
+            <span className="eyebrow">Waiting for resume</span>
+            <h2>Jobs</h2>
+            <p>Use resume evidence to rank target roles, expose skill gaps, and compare job descriptions before applying.</p>
+            {sharedAction}
+          </div>
+          <div className="roleMatchPreview">
+            {FALLBACK_JOBS.map((job) => (
+              <article className="roleMatchRow" key={job.role}>
+                <div>
+                  <span className="eyebrow">{job.company}</span>
+                  <h3>{job.role}</h3>
+                  <p>{job.skills.join(" / ")}</p>
+                </div>
+                <strong>{job.match}%</strong>
+              </article>
+            ))}
+          </div>
+        </section>
+      );
+    }
+
+    if (type === "progress") {
+      const previewSteps = [
+        { label: "Scan resume", value: 25 },
+        { label: "Fix priority gaps", value: 50 },
+        { label: "Compare target job", value: 72 },
+        { label: "Prepare interview pack", value: 90 },
+      ];
+      return (
+        <section className="featurePanel progressPreview">
+          <div className="featureHeader">
+            <span className="eyebrow">No scan yet</span>
+            <h2>Progress</h2>
+            <p>A readiness tracker that turns resume improvement into visible milestones instead of scattered notes.</p>
+            {sharedAction}
+          </div>
+          <div className="progressBoard">
+            {previewSteps.map((step) => (
+              <article className="progressStep" key={step.label}>
+                <div>
+                  <strong>{step.label}</strong>
+                  <span>{step.value}% readiness path</span>
+                </div>
+                <div className="miniBar"><i style={{ width: `${step.value}%` }} /></div>
+              </article>
+            ))}
+          </div>
+        </section>
+      );
+    }
+
+    if (type === "questions") {
+      return (
+        <section className="featurePanel questionsPreview">
+          <div className="featureHeader">
+            <span className="eyebrow">Waiting for resume</span>
+            <h2>Questions</h2>
+            <p>Build a categorized question bank for recruiter calls, technical screens, project walkthroughs, and behavioral rounds.</p>
+            {sharedAction}
+          </div>
+          <div className="questionColumns">
+            {["Technical", "Recruiter", "Project", "Behavioral"].map((category, index) => (
+              <article className="questionColumn" key={category}>
+                <h3>{category}</h3>
+                <p>{sectionGuidance.questions[index]}</p>
+              </article>
+            ))}
+          </div>
+        </section>
+      );
+    }
+
+    return (
+      <section className="featurePanel insightsPreview">
+        <div className="featureHeader">
+          <span className="eyebrow">Waiting for resume</span>
+          <h2>Insight</h2>
+          <p>A decision dashboard for positioning, missing keywords, role fit, and the highest-impact fixes to make first.</p>
+          {sharedAction}
+        </div>
+        <div className="insightMatrix">
+          {["Positioning", "Keywords", "Role fit", "Priority fixes"].map((label, index) => (
+            <article className="insightTile" key={label}>
+              <span>{label}</span>
+              <p>{sectionGuidance.insights[index]}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+    );
+  };
+
   const renderFeature = () => {
     if (activeSection === "interviews") {
+      if (!hasAnalysis) return renderPreviewFeature("interviews");
       return (
         <FeaturePanel
           title="Mock Interviews"
@@ -612,6 +764,7 @@ function App() {
       );
     }
     if (activeSection === "analyzer") {
+      if (!hasAnalysis) return renderPreviewFeature("analyzer");
       return (
         <FeaturePanel
           title="Resume Analyzer"
@@ -642,17 +795,11 @@ function App() {
           ))}
         </div>
       ) : (
-        <FeaturePanel
-          title="Jobs"
-          subtitle="Use your resume data to identify realistic role matches, skill gaps, and better target positions."
-          items={sectionGuidance.jobs}
-          action="Upload resume"
-          onAction={openUploadFlow}
-          status="Waiting for resume"
-        />
+        renderPreviewFeature("jobs")
       );
     }
     if (activeSection === "progress") {
+      if (!hasAnalysis) return renderPreviewFeature("progress");
       return (
         <FeaturePanel
           title="Progress"
@@ -723,6 +870,7 @@ function App() {
       );
     }
     if (activeSection === "questions") {
+      if (!hasAnalysis) return renderPreviewFeature("questions");
       return (
         <FeaturePanel
           title="Questions"
@@ -738,6 +886,7 @@ function App() {
       );
     }
     if (activeSection === "insights") {
+      if (!hasAnalysis) return renderPreviewFeature("insights");
       return (
         <FeaturePanel
           title="Insight"
