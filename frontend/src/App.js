@@ -72,7 +72,6 @@ function App() {
   const [uploadCount, setUploadCount] = useState(0);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [search, setSearch] = useState("");
 
   useEffect(() => {
     const saved = localStorage.getItem("resumeAppState");
@@ -728,56 +727,40 @@ function App() {
     <div className="appFrame">
       <aside className="sidebar">
         <div className="brandBlock">
-          <span className="brandMark" aria-hidden="true">RN</span>
-          <div>
-            <strong>ResumeNova</strong>
-            <small>Resume workspace</small>
-          </div>
+          <span className="brandMark" aria-hidden="true">R</span>
+          <strong>ResumeNova</strong>
         </div>
+        <nav className="sideNav" id="sidebar-options">
+          {NAV_ITEMS.map((item) => (
+            <button key={item.id} className={activeSection === item.id ? "active" : ""} onClick={() => setActiveSection(item.id)}>
+              <span>{item.mark}</span>{item.label}
+            </button>
+          ))}
+        </nav>
         <section className="accountPanel">
-          {user ? (
+          {user && (
             <div className="avatarBlock" title={user.profile_verified ? `Verified by ${user.verified_by}` : "Profile not verified"}>
               <span className="avatarInitials">{user.initials || user.username?.slice(0, 2).toUpperCase()}</span>
               <div>
                 <strong>{user.display_name || user.username}</strong>
-                <small>{user.profile_verified ? "Backend verified" : "Unverified"}</small>
-              </div>
-            </div>
-          ) : (
-            <div className="avatarBlock">
-              <span className="avatarInitials">GN</span>
-              <div>
-                <strong>Guest workspace</strong>
-                <small>Sign in to analyze resumes</small>
+                <small>{user.profile_verified ? "Verified profile" : "Profile"}</small>
               </div>
             </div>
           )}
           <div className={user ? "accountActions" : "accountActions guestActions"}>
             <button className="iconButton themeAction" onClick={() => setTheme(theme === "light" ? "dark" : "light")} aria-label="Toggle theme">
-              {theme === "light" ? "Dark mode" : "Light mode"}
+              {theme === "light" ? "Dark" : "Light"}
             </button>
             {user ? (
               <button className="secondaryButton" onClick={handleLogout}>Logout</button>
             ) : (
               <>
                 <button className="secondaryButton" onClick={() => setAuthMode("login")}>Sign in</button>
-                <button className="primaryButton" onClick={() => setAuthMode("register")}>Create account</button>
+                <button className="primaryButton" onClick={() => setAuthMode("register")}>Join</button>
               </>
             )}
           </div>
         </section>
-        <label className="searchBox">
-          <span>Search</span>
-          <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Find section..." />
-        </label>
-        <span className="navLabel">Workspace</span>
-        <nav className="sideNav" id="sidebar-options">
-          {NAV_ITEMS.filter((item) => item.label.toLowerCase().includes(search.toLowerCase())).map((item) => (
-            <button key={item.id} className={activeSection === item.id ? "active" : ""} onClick={() => setActiveSection(item.id)}>
-              <span>{item.mark}</span>{item.label}
-            </button>
-          ))}
-        </nav>
       </aside>
 
       <main className="workspace">

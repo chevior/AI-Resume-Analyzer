@@ -89,7 +89,7 @@ button:disabled {
 
 .appFrame {
   display: grid;
-  grid-template-columns: 292px minmax(0, 1fr);
+  grid-template-columns: 236px minmax(0, 1fr);
   gap: 18px;
   min-height: 100vh;
   padding: 18px;
@@ -100,9 +100,9 @@ button:disabled {
   top: 24px;
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 16px;
   height: calc(100vh - 48px);
-  padding: 16px;
+  padding: 16px 14px;
   overflow-y: auto;
   border: 1px solid var(--line);
   border-radius: 8px;
@@ -113,32 +113,20 @@ button:disabled {
 .brandBlock {
   display: flex;
   align-items: center;
-  gap: 12px;
-  min-height: 50px;
-  padding: 6px 2px 12px;
+  gap: 10px;
+  min-height: 44px;
+  padding: 4px 4px 12px;
   border-bottom: 1px solid var(--line);
 }
 
-.brandBlock div {
-  display: grid;
-  gap: 2px;
-  min-width: 0;
-}
-
 .brandBlock strong {
-  font-size: 1.05rem;
+  font-size: 1rem;
   line-height: 1.1;
 }
 
-.brandBlock small {
-  color: var(--muted);
-  font-size: 0.78rem;
-  font-weight: 750;
-}
-
 .brandMark {
-  width: 42px;
-  height: 42px;
+  width: 34px;
+  height: 34px;
   flex: 0 0 auto;
   display: grid;
   place-items: center;
@@ -153,11 +141,10 @@ button:disabled {
 
 .accountPanel {
   display: grid;
-  gap: 10px;
-  padding: 0;
-  border: 0;
-  border-radius: 0;
-  background: transparent;
+  gap: 8px;
+  margin-top: auto;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
   box-shadow: none;
 }
 
@@ -168,19 +155,15 @@ button:disabled {
 }
 
 .accountActions.guestActions {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
 .accountActions button {
   min-width: 0;
   min-height: 40px;
   padding: 8px;
-  font-size: 0.82rem;
+  font-size: 0.8rem;
   box-shadow: none;
-}
-
-.accountActions.guestActions .themeAction {
-  grid-column: 1 / -1;
 }
 
 .accountActions .primaryButton {
@@ -195,16 +178,6 @@ button:disabled {
   background: var(--panel-2);
   border-color: var(--line);
   color: var(--text);
-}
-
-.searchBox {
-  display: grid;
-  position: relative;
-  gap: 6px;
-  padding-top: 2px;
-  color: var(--muted);
-  font-size: 0.78rem;
-  font-weight: 750;
 }
 
 .searchBox input,
@@ -228,36 +201,28 @@ button:disabled {
 
 .sideNav {
   display: grid;
-  gap: 4px;
-}
-
-.navLabel {
-  margin: 2px 0 -4px;
-  color: var(--muted);
-  font-size: 0.72rem;
-  font-weight: 900;
-  text-transform: uppercase;
+  gap: 5px;
 }
 
 .sideNav button {
   display: grid;
-  grid-template-columns: 26px minmax(0, 1fr);
+  grid-template-columns: 28px minmax(0, 1fr);
   align-items: center;
-  gap: 10px;
-  min-height: 40px;
+  gap: 9px;
+  min-height: 42px;
   border: 0;
   border-radius: 8px;
   background: transparent;
   color: var(--muted);
-  padding: 7px 9px;
-  font-weight: 750;
+  padding: 8px 10px;
+  font-weight: 800;
   text-align: left;
   min-width: 0;
 }
 
 .sideNav button span {
-  width: 24px;
-  height: 24px;
+  width: 26px;
+  height: 26px;
   display: grid;
   place-items: center;
   border-radius: 8px;
